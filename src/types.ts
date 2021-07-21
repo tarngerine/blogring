@@ -5,6 +5,7 @@ export type Blog = {
   author: string;
   position: Vec;
   updatedAt: number;
+  color: string;
 };
 
 export type Vec = {

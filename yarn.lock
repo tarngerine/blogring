@@ -494,6 +494,11 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
 
+culori@^0.18.2:
+  version "0.18.2"
+  resolved "https://registry.yarnpkg.com/culori/-/culori-0.18.2.tgz#8bbfe9a8bc56938cda870e5f44d3f3c82da764c9"
+  integrity sha512-cEoI0aymWhLTFxYOPCERk3GRVA+pLML0a3VpTjmGZQICOq4Zs8/YHyZJYnPUwwt59Bup7hmWNI1pM3VLM/Sjog==
+
 damerau-levenshtein@^1.0.6:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.7.tgz#64368003512a1a6992593741a09a9d31a836f55d"

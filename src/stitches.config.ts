@@ -1,5 +1,6 @@
 // stitches.config.ts
 import { createCss } from '@stitches/react';
+import { formatRgb, parse, rgb } from 'culori';
 
 export const { styled, css, global, keyframes, getCssString, theme } = createCss({
   theme: {
@@ -14,6 +15,18 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       2: '.5rem',
       3: '.75rem',
       4: '1rem',
+    },
+    fontSizes: {
+      s: '.85rem',
+      m: '1rem',
+    },
+    fontWeights: {
+      s: '500',
+      m: '400',
+    },
+    lineHeights: {
+      s: '1rem',
+      m: '1.4rem',
     },
     colors: {
       blackA: 'rgba(0,0,0,.1)',
@@ -38,6 +51,16 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       },
     }),
     noFocus: () => () => ({ '&:focus': { outline: 'none' } }),
-    // marginX: (config) => (value) => ({ marginLeft: value, marginRight: value }),
+    tintBgColor: () => (color?: string) => {
+      if (!color) return {};
+      const tint = rgb(parse(color));
+      tint.alpha = 0.2;
+      return { background: formatRgb(tint) };
+    },
+    typography: (config) => (scale: 's' | 'm') => ({
+      fontSize: config.theme.fontSizes[scale],
+      fontWeight: config.theme.fontWeights[scale],
+      lineHeight: config.theme.lineHeights[scale],
+    }),
   },
 });

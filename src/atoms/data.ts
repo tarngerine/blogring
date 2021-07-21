@@ -40,6 +40,7 @@ const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
     content: 'vibin and jigglin\n\nfinally below 90 in dallas this wk',
     position: { x: 300, y: 300 },
     updatedAt: Date.now(),
+    color: 'salmon',
   },
   '2': {
     id: '2',
@@ -48,8 +49,27 @@ const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
     content: '🧈',
     position: { x: 100, y: 100 },
     updatedAt: Date.now(),
+    color: 'mediumorchid',
   },
 });
+
+const blogInfoByUser = atom<Record<string, Partial<Blog>[]>>((get) => {
+  const allBlogs = get(blogs);
+  const allUsers = get(users);
+  const result = {} as Record<string, Partial<Blog>[]>;
+  Object.keys(allUsers).forEach((id) => {
+    result[id] = Object.values(allBlogs)
+      .filter(({ author }) => author === id)
+      .map(({ id, title, color, updatedAt }) => ({ id, title, color, updatedAt }));
+  });
+  return result;
+});
+
+const blogInfoByUserFamily = atomFamily((id: string | undefined) =>
+  atom((get) => {
+    return id ? get(blogInfoByUser)[id] : undefined;
+  }),
+);
 
 (window as any).resetData = () => {
   window.localStorage.removeItem('blogsIds');
@@ -71,6 +91,6 @@ const blogFamily = atomFamily((id: string | undefined) =>
   ),
 );
 
-const atoms = { blogIds, blogs, blogFamily, users, userFamily };
+const atoms = { blogIds, blogs, blogFamily, users, userFamily, blogInfoByUserFamily };
 
 export default atoms;

@@ -87,7 +87,7 @@ export function Pane({
       ref={ref}
       isDragging={isDragging}
       {...bind()}>
-      <StyledPaneStyler style={style} />
+      <StyledPaneStyler css={{ tintBgColor: color }} style={style} />
       {children}
     </StyledPane>
   );
@@ -102,10 +102,11 @@ const StyledPane = styled(animated.div, {
   overflow: 'hidden',
   transition: 'box-shadow .25s linear',
   focus: '',
+  cursor: 'grab',
   variants: {
     isDragging: {
       true: {
-        cursor: 'grab',
+        cursor: 'grabbing',
         boxShadow: '0 0 0 1px $colors$blackA, 0 20px 40px 0 $colors$blackA',
       },
     },
@@ -119,10 +120,8 @@ const StyledPaneStyler = styled('div', {
 });
 
 export const StyledPaneTitle = styled('div', {
-  fontSize: '.85rem',
-  fontWeight: '500',
-  opacity: '.5',
-  padding: '.125rem $1 0 $1',
+  typography: 's',
+  padding: '.125rem $1 $1 $1',
   display: 'grid',
   placeItems: 'center',
 });

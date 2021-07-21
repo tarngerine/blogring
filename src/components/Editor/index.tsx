@@ -12,7 +12,7 @@ interface Props {
 
 export function Editor(props: Props) {
   const [blog, setBlog] = useAtom(data.blogFamily(props.id));
-  const [author, setAuthor] = useAtom(data.userFamily(blog?.author));
+  const [author] = useAtom(data.userFamily(blog?.author));
 
   if (!blog) return null;
 
@@ -22,12 +22,12 @@ export function Editor(props: Props) {
       height={480}
       position={blog.position}
       onDrag={(nextPosition: Vec) => setBlog({ ...blog, position: nextPosition })}
-      color={author?.color}
-      style={{ background: `${author?.color}`, opacity: 0.2 }}>
-      <StyledPaneTitle>
+      color={author?.color}>
+      <StyledPaneTitle style={{ color: author?.color }}>
         {blog.title} © {author?.name}
       </StyledPaneTitle>
       <StyledEditor
+        onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
         spellCheck={false}
         value={blog.content}
         onChange={(e) => setBlog({ ...blog, content: e.target.value })}
@@ -44,4 +44,5 @@ const StyledEditor = styled('textarea', {
   padding: '0 $2',
   background: 'transparent',
   noFocus: '',
+  typography: 'm',
 });
