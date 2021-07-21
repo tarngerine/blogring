@@ -37,7 +37,25 @@ export function Pane({
   });
   const [isDragging, setIsDragging] = useState(false);
   const bind = useGesture({
-    onDrag: ({ event, first, xy: [x, y], delta: [dx, dy], velocities: [vx], last }) => {
+    onDrag: ({
+      event,
+      buttons,
+      first,
+      xy: [x, y],
+      delta: [dx, dy],
+      velocities: [vx],
+      last,
+    }) => {
+      // reset when gesture finishes
+      if (last) {
+        rotate.start(0);
+        setIsDragging(false);
+      }
+
+      // left click only
+      if (buttons !== 1) {
+        return;
+      }
       // prevent text selection
       event.preventDefault();
 
@@ -60,12 +78,6 @@ export function Pane({
       // physics flips depending on how high up cursor is
       const flip = lerp(offset.y, [0, size.y], [1, -1]);
       rotate.start(vx * 20 * flip);
-
-      if (last) {
-        // reset when gesture finishes
-        rotate.start(0);
-        setIsDragging(false);
-      }
     },
   });
   return (
