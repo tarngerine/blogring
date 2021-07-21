@@ -22,11 +22,12 @@ export function Editor(props: Props) {
       height={480}
       position={blog.position}
       onDrag={(nextPosition: Vec) => setBlog({ ...blog, position: nextPosition })}
-      color={author?.color}>
-      <StyledPaneTitle style={{ color: author?.color }}>
+      color={blog.color}>
+      <StyledPaneTitle style={{ color: blog.color }}>
         {blog.title} © {author?.name}
       </StyledPaneTitle>
       <StyledEditor
+        css={{ shadeColor: blog.color }}
         onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
         spellCheck={false}
         value={blog.content}

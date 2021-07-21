@@ -1,6 +1,6 @@
 // stitches.config.ts
 import { createCss } from '@stitches/react';
-import { formatRgb, parse, rgb } from 'culori';
+import { formatRgb, interpolate, parse, rgb } from 'culori';
 
 export const { styled, css, global, keyframes, getCssString, theme } = createCss({
   theme: {
@@ -56,6 +56,10 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       const tint = rgb(parse(color));
       tint.alpha = 0.2;
       return { background: formatRgb(tint) };
+    },
+    shadeColor: () => (color: string) => {
+      const shade = interpolate([color, 'black']);
+      return { color: formatRgb(shade(0.8)) };
     },
     typography: (config) => (scale: 's' | 'm') => ({
       fontSize: config.theme.fontSizes[scale],
