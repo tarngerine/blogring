@@ -4,6 +4,7 @@ export type Blog = {
   title: string;
   author: string;
   position: Vec;
+  updatedAt: number;
 };
 
 export type Vec = {

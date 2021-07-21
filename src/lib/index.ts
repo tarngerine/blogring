@@ -7,6 +7,7 @@ export function lerp(value: number, r1: [number, number], r2: [number, number]):
   return ((value - r1[0]) * (r2[1] - r2[0])) / (r1[1] - r1[0]) + r2[0];
 }
 
+// Stores the size of an element
 export function useSize() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -15,7 +16,6 @@ export function useSize() {
     new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry.contentRect) {
-        console.log(entry.contentRect);
         setSize({ x: entry.contentRect.width, y: entry.contentRect.height });
       }
     }),

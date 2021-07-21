@@ -37,8 +37,9 @@ const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
     id: '1',
     author: '1',
     title: 'Vibe log',
-    content: 'finally below 90 in dallas this wk',
+    content: 'vibin and jigglin\n\nfinally below 90 in dallas this wk',
     position: { x: 300, y: 300 },
+    updatedAt: Date.now(),
   },
   '2': {
     id: '2',
@@ -46,6 +47,7 @@ const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
     title: 'army takes',
     content: '🧈',
     position: { x: 100, y: 100 },
+    updatedAt: Date.now(),
   },
 });
 

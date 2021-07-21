@@ -12,11 +12,12 @@ function App() {
   const blogIds = useAtomValue(data.blogIds);
   return (
     <>
-      <World />
-      <BuddyList />
-      {blogIds.map((id) => (
-        <Editor key={id} id={id} />
-      ))}
+      <World>
+        <BuddyList />
+        {blogIds.map((id) => (
+          <Editor key={id} id={id} />
+        ))}
+      </World>
     </>
   );
 }

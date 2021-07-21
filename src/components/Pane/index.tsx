@@ -37,7 +37,10 @@ export function Pane({
   });
   const [isDragging, setIsDragging] = useState(false);
   const bind = useGesture({
-    onDrag: ({ first, xy: [x, y], delta: [dx, dy], velocities: [vx, vy], last }) => {
+    onDrag: ({ event, first, xy: [x, y], delta: [dx, dy], velocities: [vx], last }) => {
+      // prevent text selection
+      event.preventDefault();
+
       // move pane
       const newX = position.x + dx;
       const newY = position.y + dy;

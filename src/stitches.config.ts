@@ -25,8 +25,8 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
     bp1: '(min-width: 480px)',
   },
   utils: {
-    full: () => () => ({
-      position: 'absolute',
+    full: () => (position: '' | 'fixed' | 'absolute') => ({
+      position: position !== '' ? position : 'absolute',
       top: 0,
       left: 0,
       right: 0,
