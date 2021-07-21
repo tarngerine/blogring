@@ -33,7 +33,7 @@ export function BuddyList() {
 function Buddy({ user }: { user: User }) {
   const blogs = useAtomValue(data.blogInfoByUserFamily(user.id));
   return (
-    <>
+    <StyledSection>
       <StyledItem>{user.name}</StyledItem>
       {blogs &&
         blogs.map((blog) => (
@@ -44,7 +44,7 @@ function Buddy({ user }: { user: User }) {
             {blog.title}
           </StyledItem>
         ))}
-    </>
+    </StyledSection>
   );
 }
 
@@ -52,17 +52,23 @@ const StyledList = styled('ul', {});
 
 const StyledItem = styled('li', {
   listStyle: 'none',
-  padding: '$1 $2',
-  borderRadius: '$2',
+  padding: '$1',
+  borderRadius: '$1',
   typography: 's',
-  '&:hover': {
-    filter: 'brightness(120%)',
-    cursor: 'pointer',
-  },
 
   variants: {
     blog: {
-      true: {},
+      true: {
+        padding: '$2',
+        '&:hover': {
+          filter: 'brightness(120%)',
+          cursor: 'pointer',
+        },
+      },
     },
   },
+});
+
+const StyledSection = styled('div', {
+  paddingTop: '$1',
 });
