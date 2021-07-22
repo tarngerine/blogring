@@ -29,3 +29,5 @@ export function useSize() {
 
   return { size, ref } as const;
 }
+
+export { SocketProvider } from './ws';

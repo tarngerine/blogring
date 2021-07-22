@@ -1,11 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.css'
-import App from './App'
+import './index.css';
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import App from './App';
+import { SocketProvider } from './lib';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SocketProvider>
+      <App />
+    </SocketProvider>
   </React.StrictMode>,
-  document.getElementById('root')
-)
+  document.getElementById('root'),
+);

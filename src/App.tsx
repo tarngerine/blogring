@@ -5,6 +5,7 @@ import React from 'react';
 
 import data from './atoms/data';
 import { BuddyList } from './components/BuddyList';
+import { Cursors } from './components/Cursors';
 import { Editor } from './components/Editor';
 import { World } from './components/World';
 
@@ -17,6 +18,7 @@ function App() {
         {blogIds.map((id) => (
           <Editor key={id} id={id} />
         ))}
+        <Cursors />
       </World>
     </>
   );
