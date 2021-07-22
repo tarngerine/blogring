@@ -2,6 +2,7 @@ import { animated, useSpring } from '@react-spring/web';
 import React, { useEffect, useRef } from 'react';
 import { useGesture } from 'react-use-gesture';
 
+import { CursorPayload, useSendSocket } from '../../lib/ws';
 import { styled } from '../../stitches.config';
 
 export function World({ children }: React.PropsWithChildren<{}>) {
@@ -24,6 +25,23 @@ export function World({ children }: React.PropsWithChildren<{}>) {
       ref.current?.removeEventListener('wheel', preventSwipe);
     };
   }, [ref]);
+
+  const send = useSendSocket();
+
+  // Basic cursor event
+  useEffect(() => {
+    const onPointerMove = (e: MouseEvent) => {
+      send({
+        event: 'cursor',
+        position: { x: e.pageX - pan.x.get(), y: e.pageY - pan.y.get() },
+      } as CursorPayload);
+    };
+    document.addEventListener('pointermove', onPointerMove);
+
+    return () => {
+      document.removeEventListener('pointermove', onPointerMove);
+    };
+  }, [send, pan]);
 
   return (
     <div ref={ref}>
