@@ -37,15 +37,8 @@ export function Pane({
   });
   const [isDragging, setIsDragging] = useState(false);
   const bind = useGesture({
-    onDrag: ({
-      event,
-      buttons,
-      first,
-      xy: [x, y],
-      delta: [dx, dy],
-      velocities: [vx],
-      last,
-    }) => {
+    onDrag: ({ event, buttons, first, delta: [dx, dy], velocities: [vx], last }) => {
+      const e = event as React.PointerEvent<HTMLDivElement>;
       // reset when gesture finishes
       if (last) {
         rotate.start(0);
@@ -57,7 +50,7 @@ export function Pane({
         return;
       }
       // prevent text selection
-      event.preventDefault();
+      e.preventDefault();
 
       // move pane
       const newX = position.x + dx;
@@ -69,7 +62,7 @@ export function Pane({
       if (onDrag) onDrag({ x: newX, y: newY });
 
       // rotate physics
-      const offset = { x: x - position.x, y: y - position.y }; // offset inside Pane
+      const offset = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }; // offset inside Pane
       if (first) {
         // save offset as the transform origin for physics animations
         transformOrigin.set(`${offset.x}px  ${offset.y}px`);
