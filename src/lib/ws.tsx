@@ -1,9 +1,9 @@
 import { atom, useAtom } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { useAtomValue, useUpdateAtom } from 'jotai/utils';
 import React, { useCallback, useEffect } from 'react';
 
 import { currentUserIdAtom } from '../atoms/current';
-import { Vec } from '../types';
+import { Blog, Vec } from '../types';
 
 const SOCKET_URL = 'wss://blogring-ws-1.glitch.me';
 // const SOCKET_URL = 'ws://localhost:3535';
@@ -23,7 +23,12 @@ export type RotationPayload = PayloadEvent & {
   origin: string;
 };
 
-type Payload = CursorPayload | RotationPayload;
+export type BlogPayload = PayloadEvent & {
+  event: 'blog';
+  blog: Pick<Blog, 'id'> & Partial<Blog>;
+};
+
+type Payload = CursorPayload | RotationPayload | BlogPayload;
 type Event = Payload['event'];
 
 // Share the same socket across hooks
@@ -42,11 +47,8 @@ export function useSendSocket() {
 
 // Share local state of the latest state for payloads by id
 export const socketStateAtom = atom<
-  Record<string, Record<string, Omit<Payload, 'event' | 'id'>>>
->({
-  cursor: {},
-  rotation: {},
-});
+  Partial<Record<string, Record<string, Omit<Payload, 'event' | 'id'>>>>
+>({});
 
 // "Provider" (not really) that wraps the app and handles socket lifecycle
 export function SocketProvider({ children }: React.PropsWithChildren<{}>) {
@@ -54,9 +56,33 @@ export function SocketProvider({ children }: React.PropsWithChildren<{}>) {
   return <>{children}</>;
 }
 
+// Handlers that can be set from other parts of the app to keep colocation
+type SocketHandler = (payload: Omit<Payload, 'event' | 'id'>) => void;
+const socketHandlers = atom<Partial<Record<Event, SocketHandler>>>({});
+export function useSetSocketHandler(event: Event, handler: SocketHandler) {
+  const set = useUpdateAtom(socketHandlers);
+  useEffect(() => {
+    set((prev) => ({ ...prev, [event]: handler }));
+  }, [event, handler]);
+}
+const runHandlerAtom = atom(
+  null,
+  (
+    get,
+    _,
+    { event, payload }: { event: Event; payload: Omit<Payload, 'id' | 'event'> },
+  ) => {
+    const handlers = get(socketHandlers);
+    if (handlers[event]) {
+      handlers[event]!(payload);
+    }
+  },
+);
+
 function useSocket() {
   const [socket, setSocket] = useAtom(socketAtom);
   const setSocketState = useUpdateAtom(socketStateAtom);
+  const runHandler = useUpdateAtom(runHandlerAtom);
 
   // create new websocket connection
   const setup = useCallback(function connect() {
@@ -71,14 +97,20 @@ function useSocket() {
     newSocket.onmessage = (e) => {
       // turn string into object
       const { event, id, ...rest } = JSON.parse(e.data) as Payload;
-      // store in a local store
-      setSocketState((prev) => ({
-        ...prev,
-        [event]: {
-          ...prev[event],
-          [id]: rest,
-        },
-      }));
+
+      // presence states stores by user id
+      if (event === 'cursor' || event === 'rotation') {
+        // store in a local store
+        setSocketState((prev) => ({
+          ...prev,
+          [event]: {
+            ...prev[event],
+            [id]: rest,
+          },
+        }));
+      } else {
+        runHandler({ event, payload: rest });
+      }
     };
     setSocket(newSocket);
   }, []);

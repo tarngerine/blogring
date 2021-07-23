@@ -1,4 +1,4 @@
-import { animated } from '@react-spring/web';
+import { animated, Spring } from '@react-spring/web';
 import { atom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
 import React, { useEffect, useRef } from 'react';
@@ -27,18 +27,23 @@ export function Cursors() {
 }
 
 function Cursor({ id, position: { x, y } }: { id: string; position: Vec }) {
-  const user = useAtomValue(data.userFamily(id));
+  // const user = useAtomValue(data.userFamily(id));
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    ref.current!.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-  }, [x, y]);
+  // useEffect(() => {
+  //   ref.current!.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  // }, [x, y]);
   return (
-    <StyledCursor
-      css={{
-        filter: `sepia(100%) saturate(150%) darkness(150%) hue-rotate(180deg)`,
-      }}
-      ref={ref}></StyledCursor>
+    <Spring to={{ x, y }}>
+      {(styles) => (
+        <StyledCursor
+          style={styles}
+          css={{
+            filter: `sepia(100%) saturate(150%) darkness(150%) hue-rotate(180deg)`,
+          }}
+          ref={ref}></StyledCursor>
+      )}
+    </Spring>
   );
 }
 

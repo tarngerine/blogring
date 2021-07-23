@@ -1,7 +1,9 @@
 import { useAtom } from 'jotai';
+import { useAtomValue, useUpdateAtom } from 'jotai/utils';
 import React from 'react';
 
 import data from '../../atoms/data';
+import { BlogPayload, useSendSocket, useSetSocketHandler } from '../../lib/ws';
 import { styled } from '../../stitches.config';
 import { Vec } from '../../types';
 import { Pane, StyledPaneTitle } from '../Pane';
@@ -10,9 +12,34 @@ interface Props {
   id: string;
 }
 
-export function Editor(props: Props) {
+export function Blogs() {
+  const blogIds = useAtomValue(data.blogIds);
+  const setBlogs = useUpdateAtom(data.blogs);
+
+  useSetSocketHandler('blog', (payload) => {
+    console.log('BLOG HANDLER', payload);
+    const { blog } = payload as BlogPayload;
+    setBlogs((prev) => ({
+      ...prev,
+      [blog.id]: {
+        ...prev[blog.id],
+        ...blog,
+      },
+    }));
+  });
+  return (
+    <>
+      {blogIds.map((id) => (
+        <BlogPane key={id} id={id} />
+      ))}
+    </>
+  );
+}
+
+export function BlogPane(props: Props) {
   const [blog, setBlog] = useAtom(data.blogFamily(props.id));
   const [author] = useAtom(data.userFamily(blog?.author));
+  const send = useSendSocket();
 
   if (!blog) return null;
 
@@ -21,7 +48,13 @@ export function Editor(props: Props) {
       width={300}
       height={480}
       position={blog.position}
-      onDrag={(nextPosition: Vec) => setBlog({ ...blog, position: nextPosition })}
+      onDrag={(nextPosition: Vec) => {
+        setBlog({ ...blog, position: nextPosition });
+        send({
+          event: 'blog',
+          blog: { id: blog.id, position: nextPosition },
+        } as BlogPayload);
+      }}
       color={blog.color}>
       <StyledPaneTitle style={{ color: blog.color }}>
         {blog.title} © {author?.name}

@@ -82,7 +82,7 @@ const blogFamily = atomFamily((id: string | undefined) =>
     (get) => {
       return id ? get(blogs)[id] : undefined;
     },
-    (get, set, blog: Blog) => {
+    (_, set, blog: Blog) => {
       set(blogs, (prev) => ({
         ...prev,
         [blog.id]: blog,

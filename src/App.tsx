@@ -1,23 +1,18 @@
 import './App.css';
 
-import { useAtomValue } from 'jotai/utils';
 import React from 'react';
 
-import data from './atoms/data';
+import { Blogs } from './components/Blog';
 import { BuddyList } from './components/BuddyList';
 import { Cursors } from './components/Cursors';
-import { Editor } from './components/Editor';
 import { World } from './components/World';
 
 function App() {
-  const blogIds = useAtomValue(data.blogIds);
   return (
     <>
       <World>
         <BuddyList />
-        {blogIds.map((id) => (
-          <Editor key={id} id={id} />
-        ))}
+        <Blogs />
         <Cursors />
       </World>
     </>
