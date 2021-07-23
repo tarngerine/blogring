@@ -1,5 +1,5 @@
 import { animated, to, useSpring } from '@react-spring/web';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
@@ -10,9 +10,19 @@ interface Props {
   width: number;
   height?: number;
   position: Vec;
-  onDrag?: (position: Vec) => void;
+  onDrag?: ({
+    position,
+    rotation,
+    origin,
+  }: {
+    position: Vec;
+    rotation: number;
+    origin: string;
+  }) => void;
   style?: React.CSSProperties;
   color?: string;
+  rotation?: number;
+  origin?: string;
 }
 
 export function Pane({
@@ -23,19 +33,30 @@ export function Pane({
   onDrag,
   style,
   color,
+  rotation,
+  origin,
 }: React.PropsWithChildren<Props>) {
   const { size, ref } = useSize();
   const { transformOrigin } = useSpring({
     from: {
       transformOrigin: 'center center',
     },
+    to: origin
+      ? {
+          transformOrigin: origin,
+        }
+      : {}, // repond to remote origin
   });
-  const { rotate } = useSpring({ from: { rotate: 0 } });
+  const { rotate } = useSpring({
+    from: { rotate: 0 },
+    to: rotation ? { rotate: rotation } : {}, // repond to remote rotation
+  });
   const spring = useSpring({
     x: position.x,
     y: position.y,
   });
   const [isDragging, setIsDragging] = useState(false);
+
   const bind = useGesture({
     onDrag: ({ event, buttons, first, delta: [dx, dy], velocities: [vx], last }) => {
       const e = event as React.PointerEvent<HTMLDivElement>;
@@ -58,19 +79,21 @@ export function Pane({
       spring.x.set(newX);
       spring.y.set(newY);
 
-      // onDrag callback
-      if (onDrag) onDrag({ x: newX, y: newY });
-
       // rotate physics
       const offset = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }; // offset inside Pane
+      const origin = `${offset.x}px  ${offset.y}px`;
       if (first) {
         // save offset as the transform origin for physics animations
-        transformOrigin.set(`${offset.x}px  ${offset.y}px`);
+        transformOrigin.set(origin);
         setIsDragging(true);
       }
       // physics flips depending on how high up cursor is
       const flip = lerp(offset.y, [0, size.y], [1, -1]);
-      rotate.start(vx * 20 * flip);
+      const rotation = vx * 20 * flip;
+      rotate.start(rotation);
+
+      // onDrag callback
+      if (onDrag) onDrag({ position: { x: newX, y: newY }, rotation, origin });
     },
   });
   return (

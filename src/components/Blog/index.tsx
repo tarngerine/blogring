@@ -1,11 +1,16 @@
-import { useAtom } from 'jotai';
-import { useAtomValue, useUpdateAtom } from 'jotai/utils';
+import { atom, useAtom } from 'jotai';
+import { atomFamily, useAtomValue, useUpdateAtom } from 'jotai/utils';
 import React from 'react';
 
 import data from '../../atoms/data';
-import { BlogPayload, useSendSocket, useSetSocketHandler } from '../../lib/ws';
+import {
+  BlogPayload,
+  RotationPayload,
+  socketStateAtom,
+  useSendSocket,
+  useSetSocketHandler,
+} from '../../lib/ws';
 import { styled } from '../../stitches.config';
-import { Vec } from '../../types';
 import { Pane, StyledPaneTitle } from '../Pane';
 
 interface Props {
@@ -17,7 +22,6 @@ export function Blogs() {
   const setBlogs = useUpdateAtom(data.blogs);
 
   useSetSocketHandler('blog', (payload) => {
-    console.log('BLOG HANDLER', payload);
     const { blog } = payload as BlogPayload;
     setBlogs((prev) => ({
       ...prev,
@@ -36,10 +40,22 @@ export function Blogs() {
   );
 }
 
+const blogPaneRotationFamily = atomFamily((id: string) =>
+  atom((get) => {
+    const rotations = get(socketStateAtom)['rotation'] as Record<
+      string,
+      Omit<RotationPayload, 'event' | 'id'>
+    >;
+
+    return rotations && rotations[id];
+  }),
+);
+
 export function BlogPane(props: Props) {
   const [blog, setBlog] = useAtom(data.blogFamily(props.id));
   const [author] = useAtom(data.userFamily(blog?.author));
-  const send = useSendSocket();
+  const send = useSendSocket(false);
+  const rotation = useAtomValue(blogPaneRotationFamily(props.id));
 
   if (!blog) return null;
 
@@ -48,12 +64,21 @@ export function BlogPane(props: Props) {
       width={300}
       height={480}
       position={blog.position}
-      onDrag={(nextPosition: Vec) => {
+      rotation={rotation?.rotation}
+      origin={rotation?.origin}
+      onDrag={({ position: nextPosition, rotation, origin }) => {
         setBlog({ ...blog, position: nextPosition });
         send({
           event: 'blog',
+          id: blog.id,
           blog: { id: blog.id, position: nextPosition },
         } as BlogPayload);
+        send({
+          event: 'rotation',
+          id: blog.id,
+          rotation,
+          origin,
+        });
       }}
       color={blog.color}>
       <StyledPaneTitle style={{ color: blog.color }}>
@@ -64,7 +89,14 @@ export function BlogPane(props: Props) {
         onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
         spellCheck={false}
         value={blog.content}
-        onChange={(e) => setBlog({ ...blog, content: e.target.value })}
+        onChange={(e) => {
+          setBlog({ ...blog, content: e.target.value });
+          send({
+            event: 'blog',
+            id: blog.id,
+            blog: { id: blog.id, content: e.target.value },
+          } as BlogPayload);
+        }}
       />
     </Pane>
   );

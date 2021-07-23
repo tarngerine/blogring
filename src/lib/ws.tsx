@@ -1,15 +1,15 @@
 import { atom, useAtom } from 'jotai';
-import { useAtomValue, useUpdateAtom } from 'jotai/utils';
+import { useUpdateAtom } from 'jotai/utils';
 import React, { useCallback, useEffect } from 'react';
 
 import { currentUserIdAtom } from '../atoms/current';
 import { Blog, Vec } from '../types';
 
-const SOCKET_URL = 'wss://blogring-ws-1.glitch.me';
-// const SOCKET_URL = 'ws://localhost:3535';
+// const SOCKET_URL = 'wss://blogring-ws-1.glitch.me';
+const SOCKET_URL = 'ws://localhost:3535';
 
 type PayloadEvent = {
-  id: string; // unique id that determines how its stored in socket state
+  id: string; // unique id that determines how its stored in socket state, only useful for presence?
 };
 
 export type CursorPayload = PayloadEvent & {
@@ -30,24 +30,31 @@ export type BlogPayload = PayloadEvent & {
 
 type Payload = CursorPayload | RotationPayload | BlogPayload;
 type Event = Payload['event'];
+type PartialPayload = Omit<Payload, 'id' | 'event'>;
 
 // Share the same socket across hooks
 const socketAtom = atom<WebSocket | null>(null);
 
 // Global function to send via socket
-const sendSocketAtom = atom(null, (get, _, obj: Omit<Payload, 'id'>) => {
+const sendSocketAtom = atom(null, (get, _, obj: Payload) => {
+  const socket = get(socketAtom);
+  if (!socket) return console.error('No socket');
+  socket.send(JSON.stringify(obj));
+});
+const sendSocketWithUserAtom = atom(null, (get, _, obj: Omit<Payload, 'id'>) => {
   const socket = get(socketAtom);
   const id = get(currentUserIdAtom);
   if (!socket) return console.error('No socket');
   socket.send(JSON.stringify({ id, ...obj }));
 });
-export function useSendSocket() {
+export function useSendSocket(useUserId: boolean) {
+  if (useUserId) return useUpdateAtom(sendSocketWithUserAtom);
   return useUpdateAtom(sendSocketAtom);
 }
 
 // Share local state of the latest state for payloads by id
 export const socketStateAtom = atom<
-  Partial<Record<string, Record<string, Omit<Payload, 'event' | 'id'>>>>
+  Partial<Record<string, Record<string, PartialPayload>>>
 >({});
 
 // "Provider" (not really) that wraps the app and handles socket lifecycle
@@ -57,7 +64,7 @@ export function SocketProvider({ children }: React.PropsWithChildren<{}>) {
 }
 
 // Handlers that can be set from other parts of the app to keep colocation
-type SocketHandler = (payload: Omit<Payload, 'event' | 'id'>) => void;
+type SocketHandler = (payload: PartialPayload) => void;
 const socketHandlers = atom<Partial<Record<Event, SocketHandler>>>({});
 export function useSetSocketHandler(event: Event, handler: SocketHandler) {
   const set = useUpdateAtom(socketHandlers);
@@ -70,7 +77,13 @@ const runHandlerAtom = atom(
   (
     get,
     _,
-    { event, payload }: { event: Event; payload: Omit<Payload, 'id' | 'event'> },
+    {
+      event,
+      payload,
+    }: {
+      event: Event;
+      payload: PartialPayload;
+    },
   ) => {
     const handlers = get(socketHandlers);
     if (handlers[event]) {

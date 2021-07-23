@@ -1,9 +1,8 @@
 import { animated, Spring } from '@react-spring/web';
 import { atom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
-import data from '../../atoms/data';
 import { CursorPayload, socketStateAtom } from '../../lib/ws';
 import { styled } from '../../stitches.config';
 import { Vec } from '../../types';

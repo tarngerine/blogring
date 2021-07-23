@@ -26,7 +26,7 @@ export function World({ children }: React.PropsWithChildren<{}>) {
     };
   }, [ref]);
 
-  const send = useSendSocket();
+  const send = useSendSocket(true);
 
   // Basic cursor event
   useEffect(() => {
