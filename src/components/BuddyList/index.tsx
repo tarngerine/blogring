@@ -17,7 +17,7 @@ export function BuddyList() {
     <Pane
       width={150}
       position={panePos[PANE]}
-      onDrag={(nextPosition) =>
+      onDrag={({ position: nextPosition }) =>
         setPanePos((prev) => ({ ...prev, [PANE]: nextPosition }))
       }>
       <StyledPaneTitle>🪐 Ring Buds</StyledPaneTitle>

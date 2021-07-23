@@ -5,8 +5,8 @@ import React, { useCallback, useEffect } from 'react';
 import { currentUserIdAtom } from '../atoms/current';
 import { Blog, Vec } from '../types';
 
-// const SOCKET_URL = 'wss://blogring-ws-1.glitch.me';
-const SOCKET_URL = 'ws://localhost:3535';
+const SOCKET_URL = 'wss://blogring-ws-1.glitch.me/ws';
+// const SOCKET_URL = 'ws://localhost:3535';
 
 type PayloadEvent = {
   id: string; // unique id that determines how its stored in socket state, only useful for presence?

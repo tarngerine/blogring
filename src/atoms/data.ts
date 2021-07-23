@@ -74,7 +74,9 @@ const blogInfoByUserFamily = atomFamily((id: string | undefined) =>
 (window as any).resetData = () => {
   window.localStorage.removeItem('blogsIds');
   window.localStorage.removeItem('blogs');
+  window.localStorage.removeItem('users');
   window.localStorage.removeItem('panes');
+  window.localStorage.removeItem('currentUserId');
 };
 
 const blogFamily = atomFamily((id: string | undefined) =>
