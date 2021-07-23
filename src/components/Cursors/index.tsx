@@ -25,7 +25,7 @@ export function Cursors() {
   );
 }
 
-function Cursor({ id, position: { x, y } }: { id: string; position: Vec }) {
+function Cursor({ position: { x, y } }: { id: string; position: Vec }) {
   // const user = useAtomValue(data.userFamily(id));
   const ref = useRef<HTMLDivElement>(null);
 

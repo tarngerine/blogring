@@ -21,7 +21,7 @@ const userFamily = atomFamily((id: string | undefined) =>
     (get) => {
       return id ? get(users)[id] : undefined;
     },
-    (get, set, user: User) => {
+    (_, set, user: User) => {
       set(users, (prev) => ({
         ...prev,
         [user.id]: user,

@@ -1,5 +1,5 @@
-import { animated, to, useSpring } from '@react-spring/web';
-import React, { useEffect, useState } from 'react';
+import { animated, useSpring } from '@react-spring/web';
+import React, { useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
