@@ -7,8 +7,8 @@ import { styled } from '../../stitches.config';
 import { Vec } from '../../types';
 
 interface Props {
-  width: number;
-  height?: number;
+  width: number | string;
+  height?: number | string;
   position: Vec;
   onDrag?: ({
     position,
@@ -23,6 +23,7 @@ interface Props {
   color?: string;
   rotation?: number;
   origin?: string;
+  id?: string;
 }
 
 export function Pane({
@@ -35,6 +36,7 @@ export function Pane({
   color,
   rotation,
   origin,
+  id,
 }: React.PropsWithChildren<Props>) {
   const { size, ref } = useSize();
   const { transformOrigin } = useSpring({
@@ -98,6 +100,7 @@ export function Pane({
   });
   return (
     <StyledPane
+      id={id}
       css={{ focus: color }}
       style={{ width, height, ...spring, transformOrigin, rotate }}
       ref={ref}
@@ -124,6 +127,11 @@ const StyledPane = styled(animated.div, {
       true: {
         cursor: 'grabbing',
         boxShadow: '0 0 0 1px $colors$blackA, 0 20px 40px 0 $colors$blackA',
+      },
+    },
+    fixed: {
+      true: {
+        position: 'fixed',
       },
     },
   },

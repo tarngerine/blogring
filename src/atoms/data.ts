@@ -1,18 +1,29 @@
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 
-import { Blog, User } from '../types';
+import { Blog, Ring, User, UUID } from '../types';
 
-const users = atomWithStorage<Record<string, User>>('users', {
+const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
+  '1': {
+    id: '1',
+    name: '∂allas cr∑w',
+    color: 'lightblue',
+    blogs: ['1', '2'],
+  },
+});
+
+const users = atomWithStorage<Record<UUID, User>>('users', {
   '1': {
     id: '1',
     name: 'julius',
     color: 'salmon',
+    rings: ['1'],
   },
   '2': {
     id: '2',
     name: 'sabrina',
     color: 'mediumorchid',
+    rings: ['1'],
   },
 });
 
@@ -93,6 +104,14 @@ const blogFamily = atomFamily((id: string | undefined) =>
   ),
 );
 
-const atoms = { blogIds, blogs, blogFamily, users, userFamily, blogInfoByUserFamily };
+const atoms = {
+  blogIds,
+  blogs,
+  blogFamily,
+  users,
+  userFamily,
+  blogInfoByUserFamily,
+  rings,
+};
 
 export default atoms;

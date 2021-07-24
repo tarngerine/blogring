@@ -1,5 +1,14 @@
+export type UUID = string;
+
+export type Ring = {
+  id: UUID;
+  name: string;
+  color: string;
+  blogs: UUID[];
+};
+
 export type Blog = {
-  id: string;
+  id: UUID;
   content: string;
   title: string;
   author: string;
@@ -14,7 +23,8 @@ export type Vec = {
 };
 
 export type User = {
-  id: string;
+  id: UUID;
   name: string;
   color: string;
+  rings: UUID[];
 };

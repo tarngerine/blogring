@@ -5,14 +5,18 @@ import React from 'react';
 import data from '../../atoms/data';
 import ui from '../../atoms/ui';
 import { styled } from '../../stitches.config';
-import { User } from '../../types';
+import { User, UUID } from '../../types';
+import { Button, UnstyledLink } from '../Base';
 import { Pane, StyledPaneTitle } from '../Pane';
 
 const PANE = 'buddyList';
 
-export function BuddyList() {
+interface Props {
+  blogs: UUID[];
+}
+
+export function BuddyList({ blogs }: Props) {
   const [panePos, setPanePos] = useAtom(ui.panes);
-  const [buddies] = useAtom(data.users);
   return (
     <Pane
       width={150}
@@ -20,13 +24,38 @@ export function BuddyList() {
       onDrag={({ position: nextPosition }) =>
         setPanePos((prev) => ({ ...prev, [PANE]: nextPosition }))
       }>
-      <StyledPaneTitle>🪐 Ring Buds</StyledPaneTitle>
+      <StyledPaneTitle>🪐 Ring buds</StyledPaneTitle>
+      {/* <StyledSection>
+        <Button>Join ring</Button>
+      </StyledSection> */}
       <StyledList>
-        {Object.values(buddies).map((buddy) => (
+        {/* {Object.values(buddies).map((buddy) => (
           <Buddy key={buddy.id} user={buddy} />
+        ))} */}
+        {blogs.map((id) => (
+          <Blog key={id} id={id} />
         ))}
       </StyledList>
     </Pane>
+  );
+}
+
+function Blog({ id }: { id: UUID }) {
+  const blog = useAtomValue(data.blogFamily(id));
+  const author = useAtomValue(data.userFamily(blog?.author));
+  if (!blog) return null;
+  return (
+    <>
+      <StyledSection>
+        <StyledItem>{author?.name}</StyledItem>
+        <StyledItem
+          key={blog.id}
+          css={{ tintBgColor: blog.color, color: blog.color }}
+          blog>
+          <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
+        </StyledItem>
+      </StyledSection>
+    </>
   );
 }
 
@@ -41,7 +70,7 @@ function Buddy({ user }: { user: User }) {
             key={blog.id}
             css={{ tintBgColor: blog.color, color: blog.color }}
             blog>
-            {blog.title}
+            <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
           </StyledItem>
         ))}
     </StyledSection>
@@ -71,4 +100,11 @@ const StyledItem = styled('li', {
 
 const StyledSection = styled('div', {
   paddingTop: '$1',
+  variants: {
+    gap: {
+      large: {
+        paddingTop: '$2',
+      },
+    },
+  },
 });

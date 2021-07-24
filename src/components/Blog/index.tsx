@@ -11,14 +11,15 @@ import {
   useSetSocketHandler,
 } from '../../lib/ws';
 import { styled } from '../../stitches.config';
+import { UUID } from '../../types';
 import { Pane, StyledPaneTitle } from '../Pane';
 
 interface Props {
   id: string;
 }
 
-export function Blogs() {
-  const blogIds = useAtomValue(data.blogIds);
+export function Blogs({ ids }: { ids: UUID[] }) {
+  // const blogIds = useAtomValue(blogIds);
   const setBlogs = useUpdateAtom(data.blogs);
 
   useSetSocketHandler('blog', (payload) => {
@@ -33,7 +34,7 @@ export function Blogs() {
   });
   return (
     <>
-      {blogIds.map((id) => (
+      {ids.map((id) => (
         <BlogPane key={id} id={id} />
       ))}
     </>
@@ -61,6 +62,7 @@ export function BlogPane(props: Props) {
 
   return (
     <Pane
+      id={`blog-${blog.id}`}
       width={300}
       height={480}
       position={blog.position}

@@ -4,8 +4,10 @@ import { useGesture } from 'react-use-gesture';
 
 import { CursorPayload, useSendSocket } from '../../lib/ws';
 import { styled } from '../../stitches.config';
-
-export function World({ children }: React.PropsWithChildren<{}>) {
+interface Props {
+  color: string;
+}
+export function World({ children, color }: React.PropsWithChildren<Props>) {
   const pan = useSpring({ from: { x: 0, y: 0 } });
   const bind = useGesture({
     onWheel: ({ xy: [x, y] }) => {
@@ -46,7 +48,7 @@ export function World({ children }: React.PropsWithChildren<{}>) {
   return (
     <div ref={ref}>
       <StyledViewport {...bind()}>
-        <StyledBackground />
+        <StyledBackground css={{ background: color }} />
         <animated.div style={pan}>{children}</animated.div>
       </StyledViewport>
     </div>
@@ -56,10 +58,10 @@ export function World({ children }: React.PropsWithChildren<{}>) {
 const StyledViewport = styled(animated.div, {
   full: 'fixed',
   overflow: 'hidden',
+  userSelect: 'none', // prevent text selection when dragging in canvas
 });
 
 const StyledBackground = styled('div', {
-  background: 'lightblue',
   full: 'fixed',
   zIndex: '-1',
 });

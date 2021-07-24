@@ -17,19 +17,26 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       4: '1rem',
     },
     fontSizes: {
+      xs: '.65rem',
       s: '.85rem',
       m: '1rem',
+      l: '1.3rem',
     },
     fontWeights: {
+      xs: '600',
       s: '500',
       m: '400',
+      l: '600',
     },
     lineHeights: {
+      xs: '1rem',
       s: '1rem',
       m: '1.4rem',
+      l: '1.5rem',
     },
     colors: {
       blackA: 'rgba(0,0,0,.1)',
+      blackAText: 'rgba(0,0,0,.66)',
       gray400: 'gainsboro',
       gray500: 'lightgray',
     },
@@ -61,10 +68,11 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       const shade = interpolate([color, 'black']);
       return { color: formatRgb(shade(0.8)) };
     },
-    typography: (config) => (scale: 's' | 'm') => ({
+    typography: (config) => (scale: 'xs' | 's' | 'm' | 'l') => ({
       fontSize: config.theme.fontSizes[scale],
       fontWeight: config.theme.fontWeights[scale],
       lineHeight: config.theme.lineHeights[scale],
+      letterSpacing: { xs: -0.3, s: 0, m: 0, l: -0.35 }[scale],
     }),
   },
 });
