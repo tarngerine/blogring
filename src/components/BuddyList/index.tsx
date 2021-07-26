@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import data from '../../atoms/data';
 import ui from '../../atoms/ui';
@@ -18,7 +18,14 @@ interface Props {
 export function BuddyList({ blogIds }: Props) {
   const [panePos, setPanePos] = useAtom(ui.panes);
   const blogs: Blog[] = useAtomValue(data.blogsFamily(blogIds));
+
   // Group blogs by user to display in list
+  // FIXME: this will rerender a lot due to updatedAt in blogs above
+  // ideally push getting Blog[] into Buddy, sort locally
+  // all we need here is actually each blog's author, no other data
+  // ring.blogIds > blogs > blogs.author > sort into author Ids
+
+  // try useAtomCallback? or just make a writable atom?
   const blogsByUser = useMemo(() => {
     const byUser: Record<UUID, Blog[]> = {};
     blogs.forEach((blog) => {
@@ -82,14 +89,16 @@ function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
       <StyledItem>{user.name}</StyledItem>
       <StyledList>
         {blogs &&
-          blogs.map((blog) => (
-            <StyledItem
-              key={blog.id}
-              css={{ tintBgColor: blog.color, color: blog.color }}
-              blog>
-              <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
-            </StyledItem>
-          ))}
+          blogs
+            .sort((a, b) => b.updatedAt - a.updatedAt)
+            .map((blog) => (
+              <StyledItem
+                key={blog.id}
+                css={{ tintBgColor: blog.color, color: blog.color }}
+                blog>
+                <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
+              </StyledItem>
+            ))}
       </StyledList>
     </StyledSection>
   );

@@ -60,11 +60,8 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
     noFocus: () => () => ({ '&:focus': { outline: 'none' } }),
     tintBgColor: () => (color?: string) => {
       if (!color) return {};
-      console.log('tinting', color);
-      const tint = rgb(parse(color));
-      tint.alpha = 0.2;
-      console.log(tint, formatRgb(tint));
-      return { backgroundColor: formatRgb(tint) };
+      const tint = interpolate([color, 'white']);
+      return { backgroundColor: formatRgb(tint(0.8)) };
     },
     shadeColor: () => (color: string) => {
       const shade = interpolate([color, 'black']);

@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
@@ -99,18 +99,14 @@ export function Pane({
     },
   });
 
-  useEffect(() => {
-    console.log('color', color, id);
-  }, [color, id]);
   return (
     <StyledPane
       id={id}
-      css={{ focus: color }}
-      style={{ width, height, ...spring, transformOrigin, rotate }}
+      css={{ focus: color, tintBgColor: color }}
+      style={{ ...style, width, height, ...spring, transformOrigin, rotate }}
       ref={ref}
       isDragging={isDragging}
       {...bind()}>
-      <StyledPaneStyler css={{ tintBgColor: color }} style={style} />
       {children}
     </StyledPane>
   );
@@ -140,18 +136,6 @@ const StyledPane = styled(animated.div, {
       },
     },
   },
-
-  // When position is 0, 0, react-spring applies transform: none instead
-  // of translate(0, 0) to StyledPane, with no hardware acceleration,
-  // which makes StyledPaneStyler zIndex work differently and pushed behind Pane instead of within it
-  // willChange forces this same hardware acceleration
-  willChange: 'transform',
-});
-
-const StyledPaneStyler = styled('div', {
-  full: 'absolute',
-  borderRadius: '$2',
-  zIndex: '-1',
 });
 
 export const StyledPaneTitle = styled('div', {

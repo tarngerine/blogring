@@ -13,7 +13,9 @@ export function useUser() {
 }
 
 export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');
-export const currentRingAtom = atom((get) => get(data.rings)[get(currentRingIdAtom)]);
+export const currentRingAtom = atom((get) =>
+  get(data.ringFamily(get(currentRingIdAtom))),
+);
 export function useRing() {
   return useAtomValue(currentRingAtom);
 }

@@ -1,4 +1,4 @@
-import { filterHueRotate, formatRgb, parse, rgb } from 'culori';
+import { filterHueRotate, formatRgb, parse } from 'culori';
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { v4 as uuid } from 'uuid';
@@ -13,6 +13,19 @@ const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
     blogs: ['1', '2'],
   },
 });
+
+const ringFamily = atomFamily((id: UUID) =>
+  atom((get) => {
+    // sort blogs by updated at
+    // const allBlogs = get(blogs);
+    const ring = get(rings)[id];
+    return ring;
+    // const sortedBlogIds = ring.blogs
+    //   .map((blogId) => allBlogs[blogId])
+    //   .sort((a, b) => b.updatedAt - a.updatedAt);
+    // return { ...ring, blogs: sortedBlogIds };
+  }),
+);
 
 const users = atomWithStorage<Record<UUID, User>>('users', {
   '1': {
@@ -121,15 +134,17 @@ const blogInfoByUserFamily = atomFamily((id: UUID | undefined) =>
 };
 
 // UUID : Blog
-const blogFamily = atomFamily((id: UUID | undefined) =>
+const blogFamily = atomFamily((id: UUID) =>
   atom(
-    (get) => {
-      return id ? get(blogs)[id] : undefined;
-    },
-    (_, set, blog: Blog) => {
+    (get) => get(blogs)[id],
+    (_, set, blog: Partial<Blog>) => {
       set(blogs, (prev) => ({
         ...prev,
-        [blog.id]: blog,
+        [id]: {
+          ...prev[id],
+          ...blog,
+          updatedAt: blog.updatedAt || Date.now(),
+        },
       }));
     },
   ),
@@ -139,7 +154,6 @@ const blogFamily = atomFamily((id: UUID | undefined) =>
 const blogsFamily = atomFamily((ids: UUID[]) =>
   atom((get) => {
     const allBlogs = get(blogs);
-    console.log(ids, allBlogs);
     return ids.map((id) => allBlogs[id]);
   }),
 );
@@ -154,6 +168,7 @@ const atoms = {
   userFamily,
   blogInfoByUserFamily,
   rings,
+  ringFamily,
 };
 
 export default atoms;

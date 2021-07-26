@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useRing } from '../../atoms/current';
 import { Banner } from '../Banner';

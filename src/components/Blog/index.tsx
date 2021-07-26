@@ -58,9 +58,6 @@ export function BlogPane(props: Props) {
   const send = useSendSocket(false);
   const rotation = useAtomValue(blogPaneRotationFamily(props.id));
 
-  useEffect(() => {
-    console.log('load blog', blog);
-  }, [blog]);
   if (!blog) return null;
 
   return (
@@ -72,7 +69,7 @@ export function BlogPane(props: Props) {
       rotation={rotation?.rotation}
       origin={rotation?.origin}
       onDrag={({ position: nextPosition, rotation, origin }) => {
-        setBlog({ ...blog, position: nextPosition });
+        setBlog({ position: nextPosition });
         send({
           event: 'blog',
           id: blog.id,
@@ -85,7 +82,12 @@ export function BlogPane(props: Props) {
           origin,
         });
       }}
-      color={blog.color}>
+      color={blog.color}
+      style={{
+        // sort panes by updated at
+        // trim off the first 3 digits (which usually deal w year) to make it a valid zindex
+        zIndex: blog.updatedAt % 10000000,
+      }}>
       <StyledPaneTitle style={{ color: blog.color }}>
         {blog.title} © {author?.name}
       </StyledPaneTitle>
