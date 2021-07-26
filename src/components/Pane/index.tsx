@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
@@ -98,6 +98,10 @@ export function Pane({
       if (onDrag) onDrag({ position: { x: newX, y: newY }, rotation, origin });
     },
   });
+
+  useEffect(() => {
+    console.log('color', color, id);
+  }, [color, id]);
   return (
     <StyledPane
       id={id}
@@ -122,6 +126,7 @@ const StyledPane = styled(animated.div, {
   transition: 'box-shadow .25s linear',
   focus: '',
   cursor: 'grab',
+
   variants: {
     isDragging: {
       true: {
@@ -135,10 +140,16 @@ const StyledPane = styled(animated.div, {
       },
     },
   },
+
+  // When position is 0, 0, react-spring applies transform: none instead
+  // of translate(0, 0) to StyledPane, with no hardware acceleration,
+  // which makes StyledPaneStyler zIndex work differently and pushed behind Pane instead of within it
+  // willChange forces this same hardware acceleration
+  willChange: 'transform',
 });
 
 const StyledPaneStyler = styled('div', {
-  full: '',
+  full: 'absolute',
   borderRadius: '$2',
   zIndex: '-1',
 });

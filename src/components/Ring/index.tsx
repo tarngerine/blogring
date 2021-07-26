@@ -15,8 +15,8 @@ export function Ring() {
         <Blogs ids={ring.blogs} />
         <Cursors />
       </World>
-      <BuddyList blogs={ring.blogs} />
-      <Banner name={ring.name} color={ring.color} />
+      <BuddyList blogIds={ring.blogs} />
+      <Banner ring={ring} />
     </>
   );
 }

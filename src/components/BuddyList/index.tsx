@@ -1,22 +1,36 @@
-import { useAtom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import data from '../../atoms/data';
 import ui from '../../atoms/ui';
 import { styled } from '../../stitches.config';
-import { User, UUID } from '../../types';
-import { Button, UnstyledLink } from '../Base';
+import { Blog, User, UUID } from '../../types';
+import { UnstyledLink } from '../Base';
 import { Pane, StyledPaneTitle } from '../Pane';
 
 const PANE = 'buddyList';
 
 interface Props {
-  blogs: UUID[];
+  blogIds: UUID[];
 }
 
-export function BuddyList({ blogs }: Props) {
+export function BuddyList({ blogIds }: Props) {
   const [panePos, setPanePos] = useAtom(ui.panes);
+  const blogs: Blog[] = useAtomValue(data.blogsFamily(blogIds));
+  // Group blogs by user to display in list
+  const blogsByUser = useMemo(() => {
+    const byUser: Record<UUID, Blog[]> = {};
+    blogs.forEach((blog) => {
+      const author = blog.author;
+      if (!byUser[author]) {
+        byUser[author] = [];
+      }
+      byUser[author].push(blog);
+    });
+    return byUser;
+  }, [blogs]);
+
   return (
     <Pane
       width={150}
@@ -29,55 +43,62 @@ export function BuddyList({ blogs }: Props) {
         <Button>Join ring</Button>
       </StyledSection> */}
       <StyledList>
-        {/* {Object.values(buddies).map((buddy) => (
-          <Buddy key={buddy.id} user={buddy} />
-        ))} */}
-        {blogs.map((id) => (
-          <Blog key={id} id={id} />
+        {Object.entries(blogsByUser).map(([user, blogs]) => (
+          <Buddy key={user} userId={user} blogs={blogs} />
         ))}
+        {/* {blogs.map((id) => (
+          <Blog key={id} id={id} />
+        ))} */}
       </StyledList>
     </Pane>
   );
 }
 
-function Blog({ id }: { id: UUID }) {
-  const blog = useAtomValue(data.blogFamily(id));
-  const author = useAtomValue(data.userFamily(blog?.author));
-  if (!blog) return null;
-  return (
-    <>
-      <StyledSection>
-        <StyledItem>{author?.name}</StyledItem>
-        <StyledItem
-          key={blog.id}
-          css={{ tintBgColor: blog.color, color: blog.color }}
-          blog>
-          <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
-        </StyledItem>
-      </StyledSection>
-    </>
-  );
-}
+// function Blog({ id }: { id: UUID }) {
+//   const blog = useAtomValue(data.blogFamily(id));
+//   const author = useAtomValue(data.userFamily(blog?.author));
+//   if (!blog) return null;
+//   return (
+//     <>
+//       <StyledSection>
+//         <StyledItem>{author?.name}</StyledItem>
+//         <StyledItem
+//           key={blog.id}
+//           css={{ tintBgColor: blog.color, color: blog.color }}
+//           blog>
+//           <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
+//         </StyledItem>
+//       </StyledSection>
+//     </>
+//   );
+// }
 
-function Buddy({ user }: { user: User }) {
-  const blogs = useAtomValue(data.blogInfoByUserFamily(user.id));
+function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
+  const user = useAtomValue(data.userFamily(userId));
+  if (!user) return null;
+
   return (
     <StyledSection>
       <StyledItem>{user.name}</StyledItem>
-      {blogs &&
-        blogs.map((blog) => (
-          <StyledItem
-            key={blog.id}
-            css={{ tintBgColor: blog.color, color: blog.color }}
-            blog>
-            <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
-          </StyledItem>
-        ))}
+      <StyledList>
+        {blogs &&
+          blogs.map((blog) => (
+            <StyledItem
+              key={blog.id}
+              css={{ tintBgColor: blog.color, color: blog.color }}
+              blog>
+              <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
+            </StyledItem>
+          ))}
+      </StyledList>
     </StyledSection>
   );
 }
 
-const StyledList = styled('ul', {});
+const StyledList = styled('ul', {
+  display: 'grid',
+  gap: '$1',
+});
 
 const StyledItem = styled('li', {
   listStyle: 'none',

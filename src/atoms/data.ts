@@ -1,5 +1,7 @@
+import { filterHueRotate, formatRgb, parse, rgb } from 'culori';
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
+import { v4 as uuid } from 'uuid';
 
 import { Blog, Ring, User, UUID } from '../types';
 
@@ -27,7 +29,7 @@ const users = atomWithStorage<Record<UUID, User>>('users', {
   },
 });
 
-const userFamily = atomFamily((id: string | undefined) =>
+const userFamily = atomFamily((id: UUID | undefined) =>
   atom(
     (get) => {
       return id ? get(users)[id] : undefined;
@@ -41,9 +43,9 @@ const userFamily = atomFamily((id: string | undefined) =>
   ),
 );
 
-const blogIds = atomWithStorage<string[]>('blogIds', ['2', '1']);
+const blogIds = atomWithStorage<UUID[]>('blogIds', ['2', '1']);
 
-const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
+const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
   '1': {
     id: '1',
     author: '1',
@@ -64,10 +66,37 @@ const blogs = atomWithStorage<Record<string, Blog>>('blogs', {
   },
 });
 
-const blogInfoByUser = atom<Record<string, Partial<Blog>[]>>((get) => {
+// Adds a blog to a ring
+const createBlog = atom(
+  null,
+  (_, set, { blogInfo, ringId }: { blogInfo: Partial<Blog>; ringId: UUID }) => {
+    const blog = newBlog(blogInfo);
+    set(blogs, (prev) => ({ ...prev, [blog.id]: blog }));
+    set(rings, (prev) => ({
+      ...prev,
+      [ringId]: { ...prev[ringId], blogs: [...prev[ringId].blogs, blog.id] },
+    }));
+  },
+);
+
+// Creates a new Blog given partial information
+function newBlog(blog: Partial<Blog>) {
+  const hueRotate = filterHueRotate(Math.random() * 360);
+  return {
+    id: blog.id || uuid(),
+    title: blog.title || 'New blog',
+    author: blog.author || 'no author provided',
+    content: blog.content || '',
+    color: blog.color || formatRgb(hueRotate(parse('salmon'))), // Base color to generate from
+    updatedAt: Date.now(),
+    position: blog.position || { x: 0, y: 0 },
+  } as Blog;
+}
+
+const blogInfoByUser = atom<Record<UUID, Partial<Blog>[]>>((get) => {
   const allBlogs = get(blogs);
   const allUsers = get(users);
-  const result = {} as Record<string, Partial<Blog>[]>;
+  const result = {} as Record<UUID, Partial<Blog>[]>;
   Object.keys(allUsers).forEach((id) => {
     result[id] = Object.values(allBlogs)
       .filter(({ author }) => author === id)
@@ -76,7 +105,7 @@ const blogInfoByUser = atom<Record<string, Partial<Blog>[]>>((get) => {
   return result;
 });
 
-const blogInfoByUserFamily = atomFamily((id: string | undefined) =>
+const blogInfoByUserFamily = atomFamily((id: UUID | undefined) =>
   atom((get) => {
     return id ? get(blogInfoByUser)[id] : undefined;
   }),
@@ -88,9 +117,11 @@ const blogInfoByUserFamily = atomFamily((id: string | undefined) =>
   window.localStorage.removeItem('users');
   window.localStorage.removeItem('panes');
   window.localStorage.removeItem('currentUserId');
+  window.localStorage.removeItem('rings');
 };
 
-const blogFamily = atomFamily((id: string | undefined) =>
+// UUID : Blog
+const blogFamily = atomFamily((id: UUID | undefined) =>
   atom(
     (get) => {
       return id ? get(blogs)[id] : undefined;
@@ -104,10 +135,21 @@ const blogFamily = atomFamily((id: string | undefined) =>
   ),
 );
 
+// UUID[] : Blog[]
+const blogsFamily = atomFamily((ids: UUID[]) =>
+  atom((get) => {
+    const allBlogs = get(blogs);
+    console.log(ids, allBlogs);
+    return ids.map((id) => allBlogs[id]);
+  }),
+);
+
 const atoms = {
   blogIds,
   blogs,
+  createBlog,
   blogFamily,
+  blogsFamily,
   users,
   userFamily,
   blogInfoByUserFamily,

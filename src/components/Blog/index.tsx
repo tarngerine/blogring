@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { atomFamily, useAtomValue, useUpdateAtom } from 'jotai/utils';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import data from '../../atoms/data';
 import {
@@ -58,6 +58,9 @@ export function BlogPane(props: Props) {
   const send = useSendSocket(false);
   const rotation = useAtomValue(blogPaneRotationFamily(props.id));
 
+  useEffect(() => {
+    console.log('load blog', blog);
+  }, [blog]);
   if (!blog) return null;
 
   return (

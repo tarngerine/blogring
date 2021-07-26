@@ -1,14 +1,19 @@
+import { useUpdateAtom } from 'jotai/utils';
 import React from 'react';
 
+import { useUser } from '../../atoms/current';
+import data from '../../atoms/data';
 import { styled } from '../../stitches.config';
+import { Ring } from '../../types';
 import { Button } from '../Base';
 
 interface Props {
-  name: string;
-  color: string;
+  ring: Ring;
 }
 
-export function Banner({ name, color }: Props) {
+export function Banner({ ring: { color, id, name } }: Props) {
+  const createBlog = useUpdateAtom(data.createBlog);
+  const user = useUser();
   return (
     <>
       <StyledBanner css={{ boxShadow: `0 .5px 0 0 ${color}` }}>
@@ -19,7 +24,17 @@ export function Banner({ name, color }: Props) {
         <StyledText>{new Date().toDateString()}</StyledText>
         <StyledLabel>Join ring</StyledLabel>
         <div>
-          <Button size="s" css={{ background: '$blackA', color, focus: color }}>
+          <Button
+            size="s"
+            css={{ background: '$blackA', color, focus: color }}
+            onClick={() =>
+              createBlog({
+                ringId: id,
+                blogInfo: {
+                  author: user.id,
+                },
+              })
+            }>
             Create blog
           </Button>
         </div>
