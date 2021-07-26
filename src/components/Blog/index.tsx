@@ -1,6 +1,7 @@
+import { animated, useSpring } from '@react-spring/web';
 import { atom, useAtom } from 'jotai';
-import { atomFamily, useAtomValue, useUpdateAtom } from 'jotai/utils';
-import React, { useEffect } from 'react';
+import { atomFamily, useAtomCallback, useAtomValue, useUpdateAtom } from 'jotai/utils';
+import React, { useCallback, useEffect } from 'react';
 
 import data from '../../atoms/data';
 import {
@@ -63,52 +64,91 @@ export function BlogPane(props: Props) {
   if (!blog) return null;
 
   return (
-    <Pane
-      id={`blog-${blog.id}`}
-      width={BLOGSIZE.x}
-      height={BLOGSIZE.y}
-      position={blog.position}
-      rotation={rotation?.rotation}
-      origin={rotation?.origin}
-      onDrag={({ position: nextPosition, rotation, origin }) => {
-        setBlog({ position: nextPosition });
-        send({
-          event: 'blog',
-          id: blog.id,
-          blog: { id: blog.id, position: nextPosition },
-        } as BlogPayload);
-        send({
-          event: 'rotation',
-          id: blog.id,
-          rotation,
-          origin,
-        });
-      }}
-      color={blog.color}
-      style={{
-        // sort panes by updated at
-        // trim off the first 3 digits (which usually deal w year) to make it a valid zindex
-        zIndex: blog.updatedAt % 10000000,
-      }}>
-      <StyledPaneTitle style={{ color: blog.color }}>
-        {blog.title} © {author?.name}
-      </StyledPaneTitle>
-      <StyledEditor
-        css={{ shadeColor: blog.color }}
-        onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
-        spellCheck={false}
-        value={blog.content}
-        onChange={(e) => {
-          setBlog({ ...blog, content: e.target.value });
+    <AnimateEntryOnce id={blog.id}>
+      <Pane
+        id={`blog-${blog.id}`}
+        width={BLOGSIZE.x}
+        height={BLOGSIZE.y}
+        position={blog.position}
+        rotation={rotation?.rotation}
+        origin={rotation?.origin}
+        onDrag={({ position: nextPosition, rotation, origin }) => {
+          setBlog({ position: nextPosition });
           send({
             event: 'blog',
             id: blog.id,
-            blog: { id: blog.id, content: e.target.value },
+            blog: { id: blog.id, position: nextPosition },
           } as BlogPayload);
+          send({
+            event: 'rotation',
+            id: blog.id,
+            rotation,
+            origin,
+          });
         }}
-      />
-    </Pane>
+        color={blog.color}
+        style={{
+          // sort panes by updated at
+          // trim off the first 3 digits (which usually deal w year) to make it a valid zindex
+          zIndex: blog.updatedAt % 10000000,
+        }}>
+        <StyledPaneTitle style={{ color: blog.color }}>
+          {blog.title} © {author?.name}
+        </StyledPaneTitle>
+        <StyledEditor
+          css={{ shadeColor: blog.color }}
+          onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
+          spellCheck={false}
+          value={blog.content}
+          onChange={(e) => {
+            setBlog({ ...blog, content: e.target.value });
+            send({
+              event: 'blog',
+              id: blog.id,
+              blog: { id: blog.id, content: e.target.value },
+            } as BlogPayload);
+          }}
+        />
+      </Pane>
+    </AnimateEntryOnce>
   );
+}
+
+export const shouldAnimateEntryAtom = atom<UUID[]>([]);
+
+function AnimateEntryOnce({ children, id }: React.PropsWithChildren<{ id: UUID }>) {
+  // when we create a new blog save the newly created ID to a current state
+  // when this blog is mounted, chekc the current "should animate entry" atom
+  // start spring off screen
+  // if should animate, then start()
+  // else just set()
+  const setShouldAnimateEntry = useUpdateAtom(shouldAnimateEntryAtom);
+  const { y } = useSpring({
+    from: { y: 2000 },
+  });
+  const checkShouldAnimate = useAtomCallback(
+    useCallback(
+      (get, _, setter: (b: boolean) => void) => {
+        setter(get(shouldAnimateEntryAtom).includes(id));
+        // mark as animated by removing this id
+        setShouldAnimateEntry((prev) => prev.filter((prevId) => prevId !== id));
+      },
+      [id],
+    ),
+  );
+
+  // If should animate reset to 0 offset
+  useEffect(() => {
+    checkShouldAnimate((should: boolean) => {
+      if (should) {
+        y.start(0);
+      } else {
+        y.set(0);
+      }
+    });
+  }, [checkShouldAnimate]);
+
+  return <animated.div style={{ y, willChange: 'transform' }}>{children}</animated.div>;
 }
 
 const StyledEditor = styled('textarea', {

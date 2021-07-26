@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { v4 as uuid } from 'uuid';
 
-import { BLOGSIZE } from '../components/Blog';
+import { BLOGSIZE, shouldAnimateEntryAtom } from '../components/Blog';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
@@ -95,6 +95,10 @@ const createBlog = atom(
         y: -scrollOffset.y + screenSize.y / 2 - BLOGSIZE.y / 2,
       },
     });
+
+    // Add to shouldAnimateEntry to animate newly created blog
+    set(shouldAnimateEntryAtom, (prev) => [...prev, blog.id]);
+
     // Update the blogs, then reference the id in the specified ring
     set(blogs, (prev) => ({ ...prev, [blog.id]: blog }));
     set(rings, (prev) => ({
