@@ -11,8 +11,10 @@ import {
   useSetSocketHandler,
 } from '../../lib/ws';
 import { styled } from '../../stitches.config';
-import { UUID } from '../../types';
+import { UUID, Vec } from '../../types';
 import { Pane, StyledPaneTitle } from '../Pane';
+
+export const BLOGSIZE: Vec = { x: 300, y: 480 };
 
 interface Props {
   id: string;
@@ -63,8 +65,8 @@ export function BlogPane(props: Props) {
   return (
     <Pane
       id={`blog-${blog.id}`}
-      width={300}
-      height={480}
+      width={BLOGSIZE.x}
+      height={BLOGSIZE.y}
       position={blog.position}
       rotation={rotation?.rotation}
       origin={rotation?.origin}

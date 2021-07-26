@@ -1,18 +1,22 @@
 import { animated, useSpring } from '@react-spring/web';
+import { useUpdateAtom } from 'jotai/utils';
 import React, { useEffect, useRef } from 'react';
 import { useGesture } from 'react-use-gesture';
 
+import { currentScrollOffsetAtom } from '../../atoms/current';
 import { CursorPayload, useSendSocket } from '../../lib/ws';
 import { styled } from '../../stitches.config';
 interface Props {
   color: string;
 }
 export function World({ children, color }: React.PropsWithChildren<Props>) {
+  const setCurrentScroll = useUpdateAtom(currentScrollOffsetAtom);
   const pan = useSpring({ from: { x: 0, y: 0 } });
   const bind = useGesture({
     onWheel: ({ xy: [x, y] }) => {
       pan.x.set(-x);
       pan.y.set(-y);
+      setCurrentScroll({ x: -x, y: -y });
     },
   });
 

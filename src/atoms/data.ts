@@ -3,7 +3,9 @@ import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { v4 as uuid } from 'uuid';
 
+import { BLOGSIZE } from '../components/Blog';
 import { Blog, Ring, User, UUID } from '../types';
+import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
 const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
   '1': {
@@ -82,8 +84,18 @@ const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
 // Adds a blog to a ring
 const createBlog = atom(
   null,
-  (_, set, { blogInfo, ringId }: { blogInfo: Partial<Blog>; ringId: UUID }) => {
-    const blog = newBlog(blogInfo);
+  (get, set, { blogInfo, ringId }: { blogInfo: Partial<Blog>; ringId: UUID }) => {
+    // center the new blog post
+    const scrollOffset = get(currentScrollOffsetAtom);
+    const screenSize = get(currentWindowSizeAtom);
+    const blog = newBlog({
+      ...blogInfo,
+      position: {
+        x: -scrollOffset.x + screenSize.x / 2 - BLOGSIZE.x / 2,
+        y: -scrollOffset.y + screenSize.y / 2 - BLOGSIZE.y / 2,
+      },
+    });
+    // Update the blogs, then reference the id in the specified ring
     set(blogs, (prev) => ({ ...prev, [blog.id]: blog }));
     set(rings, (prev) => ({
       ...prev,

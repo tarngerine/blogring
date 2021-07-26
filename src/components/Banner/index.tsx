@@ -11,18 +11,21 @@ interface Props {
   ring: Ring;
 }
 
-export function Banner({ ring: { color, id, name } }: Props) {
+export function Banner({ ring: { color, id, name, blogs } }: Props) {
   const createBlog = useUpdateAtom(data.createBlog);
   const user = useUser();
   return (
     <>
       <StyledBanner css={{ boxShadow: `0 .5px 0 0 ${color}` }}>
+        <StyledLabel>{new Date().getFullYear()}</StyledLabel>
+        <StyledText>
+          {new Date().toDateString().split(' ').slice(0, 3).join(' ')}
+        </StyledText>
+        {/* <StyledLabel>{new Date().toDateString()}</StyledLabel> */}
+
         <StyledLabel>Ring</StyledLabel>
         <StyledH1>{name}</StyledH1>
-
-        <StyledLabel>Today</StyledLabel>
-        <StyledText>{new Date().toDateString()}</StyledText>
-        <StyledLabel>Join ring</StyledLabel>
+        <StyledLabel>Write with {blogs.length} others</StyledLabel>
         <div>
           <Button
             size="s"
@@ -50,8 +53,8 @@ const StyledH1 = styled('h1', {
 
 const StyledText = styled('div', {
   // typography: 's',
-  typography: 's',
-  // typography: 'l',
+  // typography: 's',
+  typography: 'l',
 });
 
 const StyledBanner = styled('div', {
@@ -65,7 +68,7 @@ const StyledBanner = styled('div', {
   filter: 'saturate(300%) hue-rotate(30deg) brightness(50%)',
   display: 'grid',
   gridTemplateRows: 'auto 1fr',
-  gridTemplateColumns: '4fr 1fr 1fr',
+  gridTemplateColumns: '1fr 4fr 1fr',
   gridAutoFlow: 'column',
   alignItems: 'center',
 });
