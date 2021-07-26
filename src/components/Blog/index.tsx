@@ -64,53 +64,57 @@ export function BlogPane(props: Props) {
   if (!blog) return null;
 
   return (
-    <AnimateEntryOnce id={blog.id}>
-      <Pane
-        id={`blog-${blog.id}`}
-        width={BLOGSIZE.x}
-        height={BLOGSIZE.y}
-        position={blog.position}
-        rotation={rotation?.rotation}
-        origin={rotation?.origin}
-        onDrag={({ position: nextPosition, rotation, origin }) => {
-          setBlog({ position: nextPosition });
-          send({
-            event: 'blog',
-            id: blog.id,
-            blog: { id: blog.id, position: nextPosition },
-          } as BlogPayload);
-          send({
-            event: 'rotation',
-            id: blog.id,
-            rotation,
-            origin,
-          });
-        }}
-        color={blog.color}
-        style={{
-          // sort panes by updated at
-          // trim off the first 3 digits (which usually deal w year) to make it a valid zindex
-          zIndex: blog.updatedAt % 10000000,
-        }}>
-        <StyledPaneTitle style={{ color: blog.color }}>
-          {blog.title} © {author?.name}
-        </StyledPaneTitle>
-        <StyledEditor
-          css={{ shadeColor: blog.color }}
-          onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
-          spellCheck={false}
-          value={blog.content}
-          onChange={(e) => {
-            setBlog({ ...blog, content: e.target.value });
+    <div
+      style={{
+        // sort panes by updated at
+        // trim off the first 2 and last 1 digits (which usually deal w year, ms) to make it a valid zindex
+        zIndex: Math.round((blog.updatedAt % 100000000) / 10),
+        // willChange: 'transform',
+        position: 'absolute',
+      }}>
+      <AnimateEntryOnce id={blog.id}>
+        <Pane
+          id={`blog-${blog.id}`}
+          width={BLOGSIZE.x}
+          height={BLOGSIZE.y}
+          position={blog.position}
+          rotation={rotation?.rotation}
+          origin={rotation?.origin}
+          onDrag={({ position: nextPosition, rotation, origin }) => {
+            setBlog({ position: nextPosition });
             send({
               event: 'blog',
               id: blog.id,
-              blog: { id: blog.id, content: e.target.value },
+              blog: { id: blog.id, position: nextPosition },
             } as BlogPayload);
+            send({
+              event: 'rotation',
+              id: blog.id,
+              rotation,
+              origin,
+            });
           }}
-        />
-      </Pane>
-    </AnimateEntryOnce>
+          color={blog.color}>
+          <StyledPaneTitle style={{ color: blog.color }}>
+            {blog.title} © {author?.name}
+          </StyledPaneTitle>
+          <StyledEditor
+            css={{ shadeColor: blog.color }}
+            onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
+            spellCheck={false}
+            value={blog.content}
+            onChange={(e) => {
+              setBlog({ ...blog, content: e.target.value });
+              send({
+                event: 'blog',
+                id: blog.id,
+                blog: { id: blog.id, content: e.target.value },
+              } as BlogPayload);
+            }}
+          />
+        </Pane>
+      </AnimateEntryOnce>
+    </div>
   );
 }
 
