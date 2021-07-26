@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useRing } from '../../atoms/current';
+import { styled } from '../../stitches.config';
 import { Banner } from '../Banner';
 import { Blogs } from '../Blog';
 import { BuddyList } from '../BuddyList';
@@ -11,12 +12,17 @@ export function Ring() {
   const ring = useRing();
   return (
     <>
-      <World color={ring.color}>
+      <StyledBackground css={{ background: ring.color }} />
+      <Banner ring={ring} />
+      <World>
         <Blogs ids={ring.blogs} />
         <Cursors />
       </World>
       <BuddyList blogIds={ring.blogs} />
-      <Banner ring={ring} />
     </>
   );
 }
+const StyledBackground = styled('div', {
+  full: 'fixed',
+  zIndex: '-1',
+});
