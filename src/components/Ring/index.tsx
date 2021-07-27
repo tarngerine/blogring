@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { useRing } from '../../atoms/current';
 import { styled } from '../../stitches.config';
@@ -10,9 +10,7 @@ import { World } from '../World';
 
 export function Ring() {
   const ring = useRing();
-  useEffect(() => {
-    console.log('current ring useAtomValue updated', JSON.stringify(ring));
-  }, [ring]);
+
   return (
     <>
       <StyledBackground css={{ background: ring.color }} />

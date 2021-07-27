@@ -2,7 +2,7 @@
 
 import { atom } from 'jotai';
 import { atomWithStorage, useAtomValue, useUpdateAtom } from 'jotai/utils';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { UUID } from '../types';
 import data from './data';
@@ -18,14 +18,13 @@ export function useUser() {
 }
 
 export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');
-export const currentRingAtom = atom((get) => {
-  const id = get(currentRingIdAtom);
-  const allRings = get(data.rings);
-  console.log('dervied atom for current ring', JSON.stringify(allRings[id]));
-  return allRings[id];
-});
+// not using derived atom due to bug here:
+// bug: https://github.com/pmndrs/jotai/issues/616#issuecomment-887728130
 export function useRing() {
-  return useAtomValue(currentRingAtom);
+  const rings = useAtomValue(data.rings);
+  const id = useAtomValue(currentRingIdAtom);
+  const ring = useMemo(() => rings[id], [rings, id]);
+  return ring;
 }
 
 export const currentScrollOffsetAtom = atom({ x: 0, y: 0 });

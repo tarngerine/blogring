@@ -114,10 +114,6 @@ function useSocket() {
   const sendSync = useUpdateAtom(sendSyncPayloadAtom);
   const receiveSync = useUpdateAtom(receiveSyncPayloadAtom);
 
-  useEffect(() => {
-    console.log('usesocket rerender');
-  });
-
   // create new websocket connection
   const setup = useCallback(function connect() {
     const newSocket = new WebSocket(SOCKET_URL);
@@ -215,6 +211,7 @@ const receiveSyncPayloadAtom = atom(null, (get, set, payload: SyncPayload) => {
   // Blogs have timestamps so we know whether to update or not
   const updatedBlogs = { ...get(data.blogs) };
   Object.values(blogs).map((blog) => {
+    // add/replace if local blog with id doesnt exist or is older than remote
     if (
       updatedBlogs[blog.id] === undefined ||
       updatedBlogs[blog.id].updatedAt < blog.updatedAt
@@ -232,7 +229,5 @@ const receiveSyncPayloadAtom = atom(null, (get, set, payload: SyncPayload) => {
       new Set([...updatedRings[ring.id].blogs, ...ring.blogs]),
     );
   });
-  console.log(updatedBlogs);
-  console.log(updatedRings);
   set(data.rings, updatedRings);
 });

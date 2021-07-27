@@ -67,9 +67,9 @@ export function BlogPane(props: Props) {
     <div
       style={{
         // sort panes by updated at
-        // trim off the first 2 and last 1 digits (which usually deal w year, ms) to make it a valid zindex
-        zIndex: Math.round((blog.updatedAt % 100000000) / 10),
-        // willChange: 'transform',
+        // trim off the first 2 and last 2 digits (which usually deal w year, ms) to make it a valid zindex
+        // 1627360547700 -> 2736054770, still has .1s accuracy
+        zIndex: Math.round((blog.updatedAt % 100000000000) / 100),
         position: 'absolute',
       }}>
       <AnimateEntryOnce id={blog.id}>
