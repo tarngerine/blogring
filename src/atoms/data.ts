@@ -39,10 +39,10 @@ const users = atomWithStorage<Record<UUID, User>>('users', {
   },
 });
 
-const userFamily = atomFamily((id: UUID | undefined) =>
+const userFamily = atomFamily((id: UUID | null) =>
   atom(
     (get) => {
-      return id ? get(users)[id] : undefined;
+      return id ? get(users)[id] : null;
     },
     (_, set, user: User) => {
       set(users, (prev) => ({
@@ -54,7 +54,6 @@ const userFamily = atomFamily((id: UUID | undefined) =>
 );
 
 // const blogIds = atomWithStorage<UUID[]>('blogIds', ['2', '1']);
-
 const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
   '1': {
     id: '1',
@@ -62,9 +61,9 @@ const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
     title: 'Vibe log',
     content: 'vibin and jigglin\n\nfinally below 90 in dallas this wk',
     position: { x: 300, y: 300 },
-    updatedAt: Date.now(),
+    updatedAt: Date.now() + 100,
     color: 'salmon',
-    createdAt: Date.now(),
+    createdAt: Date.now() + 100,
   },
   '2': {
     id: '2',

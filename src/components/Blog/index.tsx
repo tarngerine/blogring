@@ -152,6 +152,7 @@ function AnimateEntryOnce({
 }: React.PropsWithChildren<{ createdAt: number }>) {
   const { y, opacity } = useSpring({
     from: { y: 0, opacity: 0 },
+    to: { opacity: 1 }, // prevent flickering before animation code runs
   });
 
   // If should animate reset to 0 offset
@@ -161,7 +162,6 @@ function AnimateEntryOnce({
       y.set(2000);
       y.start(0);
     }
-    opacity.set(1); // prevent flickering before animation code runs
   }, [createdAt]);
 
   return (

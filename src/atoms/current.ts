@@ -1,6 +1,6 @@
 // Current instances of data.ts
 
-import { atom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { atomWithStorage, useAtomValue, useUpdateAtom } from 'jotai/utils';
 import { useEffect, useMemo } from 'react';
 
@@ -8,13 +8,14 @@ import { UUID } from '../types';
 import data from './data';
 
 export const currentUserIdAtom = atomWithStorage<string | null>('currentUserId', null);
-export const currentUserAtom = atom((get) => {
-  const id = get(currentUserIdAtom);
-  if (id === null) return null;
-  return get(data.users)[id];
-});
+// export const currentUserAtom = atom((get) => {
+//   const id = get(currentUserIdAtom);
+//   if (id === null) return null;
+//   return get(data.users)[id];
+// });
 export function useUser() {
-  return useAtomValue(currentUserAtom);
+  const id = useAtomValue(currentUserIdAtom);
+  return useAtom(data.userFamily(id));
 }
 
 export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');

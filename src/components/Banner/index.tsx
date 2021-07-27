@@ -13,7 +13,7 @@ interface Props {
 
 export function Banner({ ring: { color, id, name, blogs } }: Props) {
   const createBlog = useUpdateAtom(data.createBlog);
-  const user = useUser();
+  const [user, setUser] = useUser();
 
   if (!user) return null;
 
@@ -33,14 +33,22 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
           <Button
             size="s"
             css={{ background: '$blackA', color, focus: color }}
-            onClick={() =>
+            onClick={() => {
+              if (user.name === '') {
+                const name = prompt(
+                  'what do you want to be known as in this ring?',
+                  'pseudonym',
+                );
+                if (!name) return console.error('No name provided');
+                setUser({ ...user, name });
+              }
               createBlog({
                 ringId: id,
                 blogInfo: {
                   author: user.id,
                 },
-              })
-            }>
+              });
+            }}>
             Create blog
           </Button>
         </div>

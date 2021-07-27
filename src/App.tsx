@@ -30,7 +30,7 @@ function useCreateUser() {
     const id = uuid();
     const newUser = {
       id,
-      name: 'ringbud' + id.substr(0, 3),
+      name: '',
       color: randomColor(),
       rings: ['1'],
     };
