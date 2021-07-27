@@ -51,7 +51,10 @@ export function BuddyList({ blogIds }: Props) {
       {/* <StyledSection>
         <Button>Join ring</Button>
       </StyledSection> */}
-      <StyledList>
+      <StyledList
+        css={{
+          padding: '$1',
+        }}>
         {Object.entries(blogsByUser).map(([user, blogs]) => (
           <Buddy key={user} userId={user} blogs={blogs} />
         ))}
@@ -88,7 +91,7 @@ function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
   if (!user) return null;
 
   return (
-    <StyledSection>
+    <>
       <StyledItem>{user.name}</StyledItem>
       <StyledList>
         {blogs &&
@@ -108,7 +111,7 @@ function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
               </li>
             ))}
       </StyledList>
-    </StyledSection>
+    </>
   );
 }
 
@@ -119,8 +122,8 @@ const StyledList = styled('ul', {
 
 const StyledItem = styled('li', {
   listStyle: 'none',
-  padding: '$1',
   borderRadius: '$1',
+  padding: '$1',
   typography: 's',
 });
 
@@ -136,16 +139,5 @@ const StyledBlogLink = styled(UnstyledLink, {
   },
   '&:active': {
     filter: 'brightness(98%)',
-  },
-});
-
-const StyledSection = styled('div', {
-  paddingTop: '$1',
-  variants: {
-    gap: {
-      large: {
-        paddingTop: '$2',
-      },
-    },
   },
 });
