@@ -26,12 +26,8 @@ export function Cursors() {
 }
 
 function Cursor({ position: { x, y } }: { id: string; position: Vec }) {
-  // const user = useAtomValue(data.userFamily(id));
   const ref = useRef<HTMLDivElement>(null);
 
-  // useEffect(() => {
-  //   ref.current!.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-  // }, [x, y]);
   return (
     <Spring to={{ x, y }}>
       {(styles) => (
@@ -53,4 +49,5 @@ const StyledCursor = styled(animated.div, {
   backgroundImage: 'url(./glove.svg)',
   backgroundRepeat: 'no-repeat',
   pointerEvents: 'none',
+  zIndex: '$cursor',
 });

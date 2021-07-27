@@ -40,6 +40,10 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       gray400: 'gainsboro',
       gray500: 'lightgray',
     },
+    zIndices: {
+      max: 2147483647,
+      cursor: '$max',
+    },
   },
   media: {
     bp1: '(min-width: 480px)',
