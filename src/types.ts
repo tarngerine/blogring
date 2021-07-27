@@ -14,6 +14,7 @@ export type Blog = {
   author: string;
   position: Vec;
   updatedAt: number;
+  createdAt: number;
   color: string;
 };
 

@@ -72,7 +72,7 @@ export function BlogPane(props: Props) {
         zIndex: Math.round((blog.updatedAt % 100000000000) / 100),
         position: 'absolute',
       }}>
-      <AnimateEntryOnce id={blog.id}>
+      <AnimateEntryOnce createdAt={blog.createdAt}>
         <Pane
           id={`blog-${blog.id}`}
           width={BLOGSIZE.x}
@@ -146,36 +146,22 @@ export function BlogPane(props: Props) {
 
 export const shouldAnimateEntryAtom = atom<UUID[]>([]);
 
-function AnimateEntryOnce({ children, id }: React.PropsWithChildren<{ id: UUID }>) {
-  // when we create a new blog save the newly created ID to a current state
-  // when this blog is mounted, chekc the current "should animate entry" atom
-  // start spring off screen
-  // if should animate, then start()
-  // else just set()
-  const setShouldAnimateEntry = useUpdateAtom(shouldAnimateEntryAtom);
+function AnimateEntryOnce({
+  children,
+  createdAt,
+}: React.PropsWithChildren<{ createdAt: number }>) {
   const { y } = useSpring({
     from: { y: 0 },
   });
-  const checkShouldAnimate = useAtomCallback(
-    useCallback(
-      (get, _, setter: (b: boolean) => void) => {
-        setter(get(shouldAnimateEntryAtom).includes(id));
-        // mark as animated by removing this id
-        setShouldAnimateEntry((prev) => prev.filter((prevId) => prevId !== id));
-      },
-      [id],
-    ),
-  );
 
   // If should animate reset to 0 offset
   useEffect(() => {
-    checkShouldAnimate((should: boolean) => {
-      if (should) {
-        y.set(2000);
-        y.start(0);
-      }
-    });
-  }, [checkShouldAnimate]);
+    const should = Date.now() - createdAt < 1000;
+    if (should) {
+      y.set(2000);
+      y.start(0);
+    }
+  }, [createdAt]);
 
   return <animated.div style={{ y, willChange: 'transform' }}>{children}</animated.div>;
 }

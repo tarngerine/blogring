@@ -64,6 +64,7 @@ const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
     position: { x: 300, y: 300 },
     updatedAt: Date.now(),
     color: 'salmon',
+    createdAt: Date.now(),
   },
   '2': {
     id: '2',
@@ -73,6 +74,7 @@ const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
     position: { x: 100, y: 100 },
     updatedAt: Date.now(),
     color: 'mediumorchid',
+    createdAt: Date.now(),
   },
 });
 
@@ -132,6 +134,7 @@ function newBlog(blog: Partial<Blog>) {
     content: blog.content || '',
     color: blog.color || randomColor(),
     updatedAt: Date.now(),
+    createdAt: Date.now(),
     position: blog.position || { x: 0, y: 0 },
   } as Blog;
 }
