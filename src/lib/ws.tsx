@@ -40,7 +40,18 @@ export type BlogPayload = {
   blog: Pick<Blog, 'id'> & Partial<Blog>;
 };
 
-type Payload = CursorPayload | RotationPayload | BlogPayload | JoinPayload | SyncPayload;
+export type RingPayload = {
+  event: 'ring';
+  ring: Pick<Ring, 'id'> & Partial<Ring>;
+};
+
+type Payload =
+  | CursorPayload
+  | RotationPayload
+  | BlogPayload
+  | JoinPayload
+  | SyncPayload
+  | RingPayload;
 type Event = Payload['event'];
 type PartialPayload = Omit<Payload, 'id' | 'event'>;
 
@@ -48,7 +59,7 @@ type PartialPayload = Omit<Payload, 'id' | 'event'>;
 const socketAtom = atom<WebSocket | null>(null);
 
 // Global function to send via socket
-const sendSocketAtom = atom(null, (get, _, obj: Payload) => {
+export const sendSocketAtom = atom(null, (get, _, obj: Payload) => {
   const socket = get(socketAtom);
   if (!socket || socket.readyState !== WebSocket.OPEN)
     return console.error('No socket or it is not ready');

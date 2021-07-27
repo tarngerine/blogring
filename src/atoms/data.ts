@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { BLOGSIZE, shouldAnimateEntryAtom } from '../components/Blog';
 import { randomColor } from '../lib';
+import { BlogPayload, RingPayload, sendSocketAtom } from '../lib/ws';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
@@ -95,10 +96,30 @@ const createBlog = atom(
 
     // Update the blogs, then reference the id in the specified ring
     set(blogs, (prev) => ({ ...prev, [blog.id]: blog }));
+    const ring = get(ringFamily(ringId));
+    const updatedRing = {
+      ...ring,
+      blogs: [...ring.blogs, blog.id],
+    };
     set(rings, (prev) => ({
       ...prev,
-      [ringId]: { ...prev[ringId], blogs: [...prev[ringId].blogs, blog.id] },
+      [ringId]: updatedRing,
     }));
+
+    // Send new blog
+    set(sendSocketAtom, {
+      event: 'blog',
+      blog,
+    } as BlogPayload);
+
+    // Send updated ring
+    set(sendSocketAtom, {
+      event: 'ring',
+      ring: {
+        id: ringId,
+        blogs: updatedRing.blogs,
+      },
+    } as RingPayload);
   },
 );
 
