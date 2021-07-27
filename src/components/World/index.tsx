@@ -14,7 +14,7 @@ import { BLOGSIZE } from '../Blog';
 const panSpringAtom = atom<{ x: SpringValue<number>; y: SpringValue<number> } | null>(
   null,
 );
-export const panToAtom = atom(null, (get, _, blogPosition: Vec) => {
+export const panToAtom = atom(null, (get, set, blogPosition: Vec) => {
   const pan = get(panSpringAtom);
   if (pan !== null) {
     // Convert the top left of the blog to the top left of the window
@@ -28,6 +28,8 @@ export const panToAtom = atom(null, (get, _, blogPosition: Vec) => {
     pan.y.stop();
     pan.x.start(position.x);
     pan.y.start(position.y);
+
+    set(currentScrollOffsetAtom, position);
   }
 });
 
@@ -45,10 +47,13 @@ export function World({ children, fixedChildren }: React.PropsWithChildren<Props
   }, []);
 
   const bind = useGesture({
-    onWheel: ({ xy: [x, y] }) => {
-      pan.x.set(-x);
-      pan.y.set(-y);
-      setCurrentScroll({ x: -x, y: -y });
+    onWheel: ({ delta: [dx, dy] }) => {
+      const x = pan.x.get() - dx;
+      const y = pan.y.get() - dy;
+
+      pan.x.set(x);
+      pan.y.set(y);
+      setCurrentScroll({ x: x, y: y });
     },
   });
 

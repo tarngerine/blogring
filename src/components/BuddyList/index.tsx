@@ -95,18 +95,17 @@ function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
           blogs
             .sort((a, b) => b.updatedAt - a.updatedAt)
             .map((blog) => (
-              <StyledItem
-                key={blog.id}
-                css={{ tintBgColor: blog.color, color: blog.color }}
-                blog>
-                <UnstyledLink
+              <li key={blog.id}>
+                <StyledBlogLink
                   href={`#blog-${blog.id}`}
+                  css={{ tintBgColor: blog.color, color: blog.color }}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     panTo(blog.position);
                   }}>
                   {blog.title}
-                </UnstyledLink>
-              </StyledItem>
+                </StyledBlogLink>
+              </li>
             ))}
       </StyledList>
     </StyledSection>
@@ -123,17 +122,20 @@ const StyledItem = styled('li', {
   padding: '$1',
   borderRadius: '$1',
   typography: 's',
+});
 
-  variants: {
-    blog: {
-      true: {
-        padding: '$2',
-        '&:hover': {
-          filter: 'brightness(105%)',
-          cursor: 'pointer',
-        },
-      },
-    },
+const StyledBlogLink = styled(UnstyledLink, {
+  borderRadius: '$1',
+  typography: 's',
+  display: 'block',
+  padding: '$2',
+  cursor: 'pointer',
+
+  '&:hover': {
+    filter: 'brightness(102%)',
+  },
+  '&:active': {
+    filter: 'brightness(98%)',
   },
 });
 
