@@ -154,7 +154,7 @@ function AnimateEntryOnce({ children, id }: React.PropsWithChildren<{ id: UUID }
   // else just set()
   const setShouldAnimateEntry = useUpdateAtom(shouldAnimateEntryAtom);
   const { y } = useSpring({
-    from: { y: 2000 },
+    from: { y: 0 },
   });
   const checkShouldAnimate = useAtomCallback(
     useCallback(
@@ -171,9 +171,8 @@ function AnimateEntryOnce({ children, id }: React.PropsWithChildren<{ id: UUID }
   useEffect(() => {
     checkShouldAnimate((should: boolean) => {
       if (should) {
+        y.set(2000);
         y.start(0);
-      } else {
-        y.set(0);
       }
     });
   }, [checkShouldAnimate]);

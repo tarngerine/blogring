@@ -1,6 +1,6 @@
 // stitches.config.ts
 import { createCss } from '@stitches/react';
-import { formatRgb, interpolate, parse, rgb } from 'culori';
+import { formatRgb, interpolate } from 'culori';
 
 export const { styled, css, global, keyframes, getCssString, theme } = createCss({
   theme: {

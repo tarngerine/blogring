@@ -1,3 +1,4 @@
+import { filterHueRotate, formatRgb, parse } from 'culori';
 import { useEffect, useRef, useState } from 'react';
 
 import { Vec } from '../types';
@@ -28,6 +29,12 @@ export function useSize() {
   }, [observer]);
 
   return { size, ref } as const;
+}
+
+// Generate a random color in our palette
+export function randomColor() {
+  const hueRotate = filterHueRotate(Math.random() * 360);
+  return formatRgb(hueRotate(parse('salmon')));
 }
 
 export { SocketProvider } from './ws';

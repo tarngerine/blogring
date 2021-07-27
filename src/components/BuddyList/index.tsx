@@ -1,11 +1,11 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import data from '../../atoms/data';
 import ui from '../../atoms/ui';
 import { styled } from '../../stitches.config';
-import { Blog, User, UUID } from '../../types';
+import { Blog, UUID } from '../../types';
 import { UnstyledLink } from '../Base';
 import { Pane, StyledPaneTitle } from '../Pane';
 

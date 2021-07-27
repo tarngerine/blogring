@@ -14,6 +14,9 @@ interface Props {
 export function Banner({ ring: { color, id, name, blogs } }: Props) {
   const createBlog = useUpdateAtom(data.createBlog);
   const user = useUser();
+
+  if (!user) return null;
+
   return (
     <>
       <StyledBanner css={{ boxShadow: `0 .5px 0 0 ${color}` }}>

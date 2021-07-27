@@ -1,9 +1,9 @@
-import { filterHueRotate, formatRgb, parse } from 'culori';
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { v4 as uuid } from 'uuid';
 
 import { BLOGSIZE, shouldAnimateEntryAtom } from '../components/Blog';
+import { randomColor } from '../lib';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
@@ -18,14 +18,8 @@ const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
 
 const ringFamily = atomFamily((id: UUID) =>
   atom((get) => {
-    // sort blogs by updated at
-    // const allBlogs = get(blogs);
     const ring = get(rings)[id];
     return ring;
-    // const sortedBlogIds = ring.blogs
-    //   .map((blogId) => allBlogs[blogId])
-    //   .sort((a, b) => b.updatedAt - a.updatedAt);
-    // return { ...ring, blogs: sortedBlogIds };
   }),
 );
 
@@ -58,7 +52,7 @@ const userFamily = atomFamily((id: UUID | undefined) =>
   ),
 );
 
-const blogIds = atomWithStorage<UUID[]>('blogIds', ['2', '1']);
+// const blogIds = atomWithStorage<UUID[]>('blogIds', ['2', '1']);
 
 const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
   '1': {
@@ -110,13 +104,12 @@ const createBlog = atom(
 
 // Creates a new Blog given partial information
 function newBlog(blog: Partial<Blog>) {
-  const hueRotate = filterHueRotate(Math.random() * 360);
   return {
     id: blog.id || uuid(),
     title: blog.title || 'New blog',
     author: blog.author || 'no author provided',
     content: blog.content || '',
-    color: blog.color || formatRgb(hueRotate(parse('salmon'))), // Base color to generate from
+    color: blog.color || randomColor(),
     updatedAt: Date.now(),
     position: blog.position || { x: 0, y: 0 },
   } as Blog;
@@ -143,9 +136,10 @@ const blogInfoByUserFamily = atomFamily((id: UUID | undefined) =>
 (window as any).resetData = () => {
   window.localStorage.removeItem('blogsIds');
   window.localStorage.removeItem('blogs');
-  window.localStorage.removeItem('users');
   window.localStorage.removeItem('panes');
+  window.localStorage.removeItem('users');
   window.localStorage.removeItem('currentUserId');
+  window.localStorage.removeItem('currentRingId');
   window.localStorage.removeItem('rings');
 };
 
@@ -182,7 +176,7 @@ const blogsFamily = atomFamily((ids: UUID[]) =>
 );
 
 const atoms = {
-  blogIds,
+  // blogIds,
   blogs,
   createBlog,
   blogFamily,

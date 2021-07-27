@@ -7,16 +7,23 @@ import { useEffect } from 'react';
 import { UUID } from '../types';
 import data from './data';
 
-export const currentUserIdAtom = atomWithStorage<string>('currentUserId', '1');
-export const currentUserAtom = atom((get) => get(data.users)[get(currentUserIdAtom)]);
+export const currentUserIdAtom = atomWithStorage<string | null>('currentUserId', null);
+export const currentUserAtom = atom((get) => {
+  const id = get(currentUserIdAtom);
+  if (id === null) return null;
+  return get(data.users)[id];
+});
 export function useUser() {
   return useAtomValue(currentUserAtom);
 }
 
 export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');
-export const currentRingAtom = atom((get) =>
-  get(data.ringFamily(get(currentRingIdAtom))),
-);
+export const currentRingAtom = atom((get) => {
+  const id = get(currentRingIdAtom);
+  const allRings = get(data.rings);
+  console.log('dervied atom for current ring', JSON.stringify(allRings[id]));
+  return allRings[id];
+});
 export function useRing() {
   return useAtomValue(currentRingAtom);
 }

@@ -10,6 +10,9 @@ import { World } from '../World';
 
 export function Ring() {
   const ring = useRing();
+  useEffect(() => {
+    console.log('current ring useAtomValue updated', JSON.stringify(ring));
+  }, [ring]);
   return (
     <>
       <StyledBackground css={{ background: ring.color }} />
