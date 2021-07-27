@@ -20,15 +20,15 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
   return (
     <>
       <StyledBanner css={{ boxShadow: `0 .5px 0 0 ${color}` }}>
-        <StyledLabel>{new Date().getFullYear()}</StyledLabel>
+        {/* <StyledLabel>{new Date().getFullYear()}</StyledLabel> */}
         <StyledText>
           {new Date().toDateString().split(' ').slice(0, 3).join(' ')}
         </StyledText>
         {/* <StyledLabel>{new Date().toDateString()}</StyledLabel> */}
 
-        <StyledLabel>Ring</StyledLabel>
+        {/* <StyledLabel>Ring</StyledLabel> */}
         <StyledH1>{name}</StyledH1>
-        <StyledLabel>Write with {blogs.length} others</StyledLabel>
+        {/* <StyledLabel>Write with {blogs.length} others</StyledLabel> */}
         <div>
           <Button
             size="s"
@@ -62,14 +62,13 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
 }
 
 const StyledH1 = styled('h1', {
-  // typography: 'l',
-  typography: 'l',
+  typography: 'm',
+  fontWeight: '600',
+  // justifySelf: 'center',
 });
 
 const StyledText = styled('div', {
-  // typography: 's',
-  // typography: 's',
-  typography: 'l',
+  typography: 'm',
 });
 
 const StyledBanner = styled('div', {
@@ -80,9 +79,9 @@ const StyledBanner = styled('div', {
   padding: '0 0 $2',
   opacity: '0.8',
   color: 'lightblue',
-  filter: 'saturate(300%) hue-rotate(30deg) brightness(50%)',
+  filter: 'saturate(300%) hue-rotate(30deg) brightness(45%)',
   display: 'grid',
-  gridTemplateRows: 'auto 1fr',
+  // gridTemplateRows: 'auto 1fr',
   gridTemplateColumns: '1fr 4fr 1fr',
   gridAutoFlow: 'column',
   alignItems: 'center',

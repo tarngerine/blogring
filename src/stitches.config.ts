@@ -20,7 +20,7 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       xs: '.65rem',
       s: '.85rem',
       m: '1rem',
-      l: '1.3rem',
+      l: '1.2rem',
     },
     fontWeights: {
       xs: '600',
