@@ -112,32 +112,34 @@ export function BlogPane(props: Props) {
             }
           }}
           color={blog.color}>
-          <StyledPaneTitle style={{ color: blog.color }}>
-            {blog.title} © {author?.name}
-          </StyledPaneTitle>
-          <StyledEditor
-            css={{ shadeColor: blog.color }}
-            onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
-            spellCheck={false}
-            value={blog.content}
-            onChange={(e) => {
-              setBlog((prev) => {
-                const next = { ...prev, content: e.target.value };
+          <StyledScrollview>
+            <StyledPaneTitle style={{ color: blog.color }}>
+              {blog.title} © {author?.name}
+            </StyledPaneTitle>
+            <StyledEditor
+              css={{ shadeColor: blog.color }}
+              onPointerDown={(event) => event.stopPropagation()} // prevent pane onDrag stealing
+              spellCheck={false}
+              value={blog.content}
+              onChange={(e) => {
+                setBlog((prev) => {
+                  const next = { ...prev, content: e.target.value };
 
-                // Send partial payload
-                send({
-                  event: 'blog',
-                  blog: {
-                    id: next.id,
-                    content: next.content,
-                    updatedAt: next.updatedAt,
-                  },
-                } as BlogPayload);
+                  // Send partial payload
+                  send({
+                    event: 'blog',
+                    blog: {
+                      id: next.id,
+                      content: next.content,
+                      updatedAt: next.updatedAt,
+                    },
+                  } as BlogPayload);
 
-                return next;
-              });
-            }}
-          />
+                  return next;
+                });
+              }}
+            />
+          </StyledScrollview>
         </Pane>
       </AnimateEntryOnce>
     </div>
@@ -180,4 +182,11 @@ const StyledEditor = styled('textarea', {
   background: 'transparent',
   noFocus: '',
   typography: 'm',
+});
+
+const StyledScrollview = styled('div', {
+  height: '100%',
+  overflowY: 'auto',
+  display: 'grid',
+  gridTemplateRows: 'auto 1fr',
 });
