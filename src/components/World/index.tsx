@@ -1,17 +1,49 @@
-import { animated, useSpring } from '@react-spring/web';
+import { animated, SpringValue, useSpring } from '@react-spring/web';
+import { atom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 import React, { useEffect, useRef } from 'react';
 import { useGesture } from 'react-use-gesture';
 
-import { currentScrollOffsetAtom } from '../../atoms/current';
+import { currentScrollOffsetAtom, currentWindowSizeAtom } from '../../atoms/current';
 import { CursorPayload, useSendSocket } from '../../lib/ws';
 import { styled } from '../../stitches.config';
+import { Vec } from '../../types';
+import { BLOGSIZE } from '../Blog';
+
+// Allow other components to control the pan position
+const panSpringAtom = atom<{ x: SpringValue<number>; y: SpringValue<number> } | null>(
+  null,
+);
+export const panToAtom = atom(null, (get, _, blogPosition: Vec) => {
+  const pan = get(panSpringAtom);
+  if (pan !== null) {
+    // Convert the top left of the blog to the top left of the window
+    const screenSize = get(currentWindowSizeAtom);
+    const position = {
+      x: -blogPosition.x + screenSize.x / 2 - BLOGSIZE.x / 2,
+      y: -blogPosition.y + screenSize.y / 2 - BLOGSIZE.y / 2,
+    };
+
+    pan.x.stop();
+    pan.y.stop();
+    pan.x.start(position.x);
+    pan.y.start(position.y);
+  }
+});
+
 interface Props {
   fixedChildren: React.ReactNode;
 }
+
 export function World({ children, fixedChildren }: React.PropsWithChildren<Props>) {
   const setCurrentScroll = useUpdateAtom(currentScrollOffsetAtom);
   const pan = useSpring({ from: { x: 0, y: 0 } });
+  const setPanAtom = useUpdateAtom(panSpringAtom);
+  // Add reference to pan as an atom to control scroll from elsewhere
+  useEffect(() => {
+    setPanAtom(pan);
+  }, []);
+
   const bind = useGesture({
     onWheel: ({ xy: [x, y] }) => {
       pan.x.set(-x);

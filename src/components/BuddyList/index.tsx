@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { useAtomValue } from 'jotai/utils';
+import { useAtomValue, useUpdateAtom } from 'jotai/utils';
 import React, { useMemo } from 'react';
 
 import data from '../../atoms/data';
@@ -8,6 +8,7 @@ import { styled } from '../../stitches.config';
 import { Blog, UUID } from '../../types';
 import { UnstyledLink } from '../Base';
 import { Pane, StyledPaneTitle } from '../Pane';
+import { panToAtom } from '../World';
 
 const PANE = 'buddyList';
 
@@ -83,6 +84,7 @@ export function BuddyList({ blogIds }: Props) {
 
 function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
   const user = useAtomValue(data.userFamily(userId));
+  const panTo = useUpdateAtom(panToAtom);
   if (!user) return null;
 
   return (
@@ -97,7 +99,13 @@ function Buddy({ userId, blogs }: { userId: UUID; blogs: Blog[] }) {
                 key={blog.id}
                 css={{ tintBgColor: blog.color, color: blog.color }}
                 blog>
-                <UnstyledLink href={`#blog-${blog.id}`}>{blog.title}</UnstyledLink>
+                <UnstyledLink
+                  href={`#blog-${blog.id}`}
+                  onClick={() => {
+                    panTo(blog.position);
+                  }}>
+                  {blog.title}
+                </UnstyledLink>
               </StyledItem>
             ))}
       </StyledList>
