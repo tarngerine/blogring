@@ -11,7 +11,7 @@ import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
   '1': {
     id: '1',
-    name: '∂allas cr∑w',
+    name: 'blogring hivemind',
     color: 'lightblue',
     blogs: ['1', '2'],
   },

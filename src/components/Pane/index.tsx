@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
@@ -43,16 +43,9 @@ export function Pane({
     from: {
       transformOrigin: 'center center',
     },
-    to:
-      origin !== undefined
-        ? {
-            transformOrigin: origin,
-          }
-        : {}, // repond to remote origin
   });
   const { rotate } = useSpring({
     from: { rotate: 0 },
-    to: rotation !== undefined ? { rotate: rotation } : {}, // repond to remote rotation
   });
   const spring = useSpring({
     x: position.x,
@@ -60,6 +53,7 @@ export function Pane({
   });
   const [isDragging, setIsDragging] = useState(false);
 
+  // Drag animations
   const bind = useGesture({
     onDrag: ({ event, buttons, first, delta: [dx, dy], velocities: [vx], last }) => {
       const e = event as React.PointerEvent<HTMLDivElement>;
@@ -97,11 +91,25 @@ export function Pane({
       const flip = lerp(offset.y, [0, size.y], [1, -1]);
       const rotation = vx * 20 * flip;
       rotate.start(rotation);
+      console.log('rotation', rotation);
 
       // onDrag callback
       if (onDrag) onDrag({ position: { x: newX, y: newY }, rotation, origin });
     },
   });
+
+  // Respond to remote rotation and origin
+  useEffect(() => {
+    if (rotation !== undefined) {
+      rotate.start(rotation);
+    }
+  }, [rotation]);
+
+  useEffect(() => {
+    if (origin !== undefined) {
+      transformOrigin.start(origin);
+    }
+  }, [origin]);
 
   return (
     <StyledPane
