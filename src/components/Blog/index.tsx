@@ -1,7 +1,7 @@
 import { animated, useSpring } from '@react-spring/web';
 import { atom, useAtom } from 'jotai';
-import { atomFamily, useAtomCallback, useAtomValue, useUpdateAtom } from 'jotai/utils';
-import React, { useCallback, useEffect } from 'react';
+import { atomFamily, useAtomValue, useUpdateAtom } from 'jotai/utils';
+import React, { useEffect } from 'react';
 
 import data from '../../atoms/data';
 import {

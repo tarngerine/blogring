@@ -1,6 +1,6 @@
 // stitches.config.ts
 import { createCss } from '@stitches/react';
-import { formatRgb, interpolate } from 'culori';
+import { formatRgb, interpolate, parse, rgb } from 'culori';
 
 export const { styled, css, global, keyframes, getCssString, theme } = createCss({
   theme: {
@@ -77,5 +77,11 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       lineHeight: config.theme.lineHeights[scale],
       letterSpacing: { xs: -0.3, s: 0, m: 0, l: -0.35 }[scale],
     }),
+    shadowBorderColor: () => (color?: string) => {
+      if (!color) return {};
+      const colorWithAlpha = rgb(parse(color));
+      colorWithAlpha.alpha = 0.3;
+      return { boxShadow: `0 0 0 1px ${formatRgb(colorWithAlpha)}` };
+    },
   },
 });
