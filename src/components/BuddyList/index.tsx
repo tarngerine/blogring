@@ -42,9 +42,10 @@ export function BuddyList({ blogIds }: Props) {
     <Pane
       width={150}
       position={panePos[PANE]}
-      onDrag={({ position: nextPosition }) =>
-        setPanePos((prev) => ({ ...prev, [PANE]: nextPosition }))
-      }>
+      onDrag={({ position: nextPosition }) => {
+        if (nextPosition === undefined) return;
+        setPanePos((prev) => ({ ...prev, [PANE]: nextPosition }));
+      }}>
       <StyledPaneTitle>🪐 Ring buds</StyledPaneTitle>
       {/* <StyledSection>
         <Button>Join ring</Button>

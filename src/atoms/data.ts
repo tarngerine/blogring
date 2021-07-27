@@ -153,15 +153,22 @@ const blogInfoByUserFamily = atomFamily((id: UUID | undefined) =>
 const blogFamily = atomFamily((id: UUID) =>
   atom(
     (get) => get(blogs)[id],
-    (_, set, blog: Partial<Blog>) => {
-      set(blogs, (prev) => ({
-        ...prev,
-        [id]: {
+    (_, set, setter: (blog: Blog) => Blog) => {
+      set(blogs, (prev) => {
+        // Update timestamp so the setter has access
+        const prevWithNextTime = {
           ...prev[id],
-          ...blog,
-          updatedAt: blog.updatedAt || Date.now(),
-        },
-      }));
+          updatedAt: Date.now(),
+        };
+        const next = setter(prevWithNextTime);
+        return {
+          ...prev,
+          [id]: {
+            ...prev[id],
+            ...next,
+          },
+        };
+      });
     },
   ),
 );

@@ -1,5 +1,5 @@
 import { animated, useSpring } from '@react-spring/web';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 
 import { lerp, useSize } from '../../lib';
@@ -15,9 +15,9 @@ interface Props {
     rotation,
     origin,
   }: {
-    position: Vec;
-    rotation: number;
-    origin: string;
+    position?: Vec;
+    rotation?: number;
+    origin?: string;
   }) => void;
   style?: React.CSSProperties;
   color?: string;
@@ -43,15 +43,16 @@ export function Pane({
     from: {
       transformOrigin: 'center center',
     },
-    to: origin
-      ? {
-          transformOrigin: origin,
-        }
-      : {}, // repond to remote origin
+    to:
+      origin !== undefined
+        ? {
+            transformOrigin: origin,
+          }
+        : {}, // repond to remote origin
   });
   const { rotate } = useSpring({
     from: { rotate: 0 },
-    to: rotation ? { rotate: rotation } : {}, // repond to remote rotation
+    to: rotation !== undefined ? { rotate: rotation } : {}, // repond to remote rotation
   });
   const spring = useSpring({
     x: position.x,
@@ -62,10 +63,13 @@ export function Pane({
   const bind = useGesture({
     onDrag: ({ event, buttons, first, delta: [dx, dy], velocities: [vx], last }) => {
       const e = event as React.PointerEvent<HTMLDivElement>;
+
       // reset when gesture finishes
       if (last) {
         rotate.start(0);
         setIsDragging(false);
+        if (onDrag) onDrag({ rotation: 0, origin: transformOrigin.get() });
+        return;
       }
 
       // left click only

@@ -23,7 +23,7 @@ export type RotationPayload = PayloadEvent & {
   origin: string;
 };
 
-export type BlogPayload = PayloadEvent & {
+export type BlogPayload = {
   event: 'blog';
   blog: Pick<Blog, 'id'> & Partial<Blog>;
 };
@@ -109,10 +109,11 @@ function useSocket() {
     };
     newSocket.onmessage = (e) => {
       // turn string into object
-      const { event, id, ...rest } = JSON.parse(e.data) as Payload;
+      const payload = JSON.parse(e.data) as Payload;
 
       // presence states stores by user id
-      if (event === 'cursor' || event === 'rotation') {
+      if (payload.event === 'cursor' || payload.event === 'rotation') {
+        const { event, id, ...rest } = payload;
         // store in a local store
         setSocketState((prev) => ({
           ...prev,
@@ -122,6 +123,7 @@ function useSocket() {
           },
         }));
       } else {
+        const { event, ...rest } = payload;
         runHandler({ event, payload: rest });
       }
     };

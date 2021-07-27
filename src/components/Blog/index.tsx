@@ -81,18 +81,35 @@ export function BlogPane(props: Props) {
           rotation={rotation?.rotation}
           origin={rotation?.origin}
           onDrag={({ position: nextPosition, rotation, origin }) => {
-            setBlog({ position: nextPosition });
-            send({
-              event: 'blog',
-              id: blog.id,
-              blog: { id: blog.id, position: nextPosition },
-            } as BlogPayload);
-            send({
-              event: 'rotation',
-              id: blog.id,
-              rotation,
-              origin,
-            });
+            if (nextPosition !== undefined) {
+              setBlog((prev) => {
+                const next = {
+                  ...prev,
+                  position: nextPosition,
+                };
+
+                // Send partial payload
+                send({
+                  event: 'blog',
+                  blog: {
+                    id: next.id,
+                    position: next.position,
+                    updatedAt: next.updatedAt,
+                  },
+                } as BlogPayload);
+
+                return next;
+              });
+            }
+
+            if (rotation !== undefined && origin !== undefined) {
+              send({
+                event: 'rotation',
+                id: blog.id,
+                rotation,
+                origin,
+              });
+            }
           }}
           color={blog.color}>
           <StyledPaneTitle style={{ color: blog.color }}>
@@ -104,12 +121,21 @@ export function BlogPane(props: Props) {
             spellCheck={false}
             value={blog.content}
             onChange={(e) => {
-              setBlog({ ...blog, content: e.target.value });
-              send({
-                event: 'blog',
-                id: blog.id,
-                blog: { id: blog.id, content: e.target.value },
-              } as BlogPayload);
+              setBlog((prev) => {
+                const next = { ...prev, content: e.target.value };
+
+                // Send partial payload
+                send({
+                  event: 'blog',
+                  blog: {
+                    id: next.id,
+                    content: next.content,
+                    updatedAt: next.updatedAt,
+                  },
+                } as BlogPayload);
+
+                return next;
+              });
             }}
           />
         </Pane>
