@@ -17,7 +17,8 @@ export function useUser() {
   return useAtomValue(currentUserAtom);
 }
 
-export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');
+// export const currentRingIdAtom = atomWithStorage<UUID>('currentRingId', '1');
+export const currentRingIdAtom = atom<UUID>('1');
 export const currentRingAtom = atom((get) => {
   const id = get(currentRingIdAtom);
   const allRings = get(data.rings);

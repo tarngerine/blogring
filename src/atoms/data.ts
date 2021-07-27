@@ -7,7 +7,8 @@ import { randomColor } from '../lib';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
-const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
+// const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
+const rings = atom<Record<UUID, Ring>>({
   '1': {
     id: '1',
     name: '∂allas cr∑w',
@@ -54,7 +55,8 @@ const userFamily = atomFamily((id: UUID | undefined) =>
 
 // const blogIds = atomWithStorage<UUID[]>('blogIds', ['2', '1']);
 
-const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
+// const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
+const blogs = atom<Record<UUID, Blog>>({
   '1': {
     id: '1',
     author: '1',
@@ -99,6 +101,8 @@ const createBlog = atom(
       ...prev,
       [ringId]: { ...prev[ringId], blogs: [...prev[ringId].blogs, blog.id] },
     }));
+
+    // todo: live sync
   },
 );
 
