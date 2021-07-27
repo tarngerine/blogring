@@ -72,6 +72,14 @@ export function Pane({
       }
       // prevent text selection
       e.preventDefault();
+      if (first) {
+        // We are preventing default so need to manually blur focused textarea
+        // Because animation framerate drops when textarea is focused
+        const el = document.activeElement;
+        if (el?.tagName === 'TEXTAREA') {
+          (el as HTMLTextAreaElement).blur();
+        }
+      }
 
       // move pane
       const newX = position.x + dx;
@@ -91,7 +99,6 @@ export function Pane({
       const flip = lerp(offset.y, [0, size.y], [1, -1]);
       const rotation = vx * 20 * flip;
       rotate.start(rotation);
-      console.log('rotation', rotation);
 
       // onDrag callback
       if (onDrag) onDrag({ position: { x: newX, y: newY }, rotation, origin });
