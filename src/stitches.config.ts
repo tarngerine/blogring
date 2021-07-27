@@ -46,7 +46,8 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
     },
   },
   media: {
-    bp1: '(min-width: 480px)',
+    phone: '(max-width: 400px)',
+    tablet: '(max-width: 600px)',
   },
   utils: {
     full: () => (position: '' | 'fixed' | 'absolute') => ({

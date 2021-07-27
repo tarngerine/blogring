@@ -29,7 +29,7 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
         {/* <StyledLabel>Ring</StyledLabel> */}
         <StyledH1>{name}</StyledH1>
         {/* <StyledLabel>Write with {blogs.length} others</StyledLabel> */}
-        <div>
+        <StyledAction>
           <Button
             size="s"
             css={{ background: '$blackA', color, focus: color }}
@@ -55,7 +55,7 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
             }}>
             Create blog
           </Button>
-        </div>
+        </StyledAction>
       </StyledBanner>
     </>
   );
@@ -64,11 +64,16 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
 const StyledH1 = styled('h1', {
   typography: 'm',
   fontWeight: '600',
-  // justifySelf: 'center',
+  '@phone': {
+    typography: 's',
+  },
 });
 
 const StyledText = styled('div', {
   typography: 'm',
+  '@phone': {
+    typography: 's',
+  },
 });
 
 const StyledBanner = styled('div', {
@@ -85,6 +90,24 @@ const StyledBanner = styled('div', {
   gridTemplateColumns: '1fr 4fr 1fr',
   gridAutoFlow: 'column',
   alignItems: 'center',
+  gridGap: '$4',
+
+  '@tablet': {
+    gridTemplateColumns: 'auto 1fr auto',
+  },
+  '@phone': {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: 'auto auto',
+    gridGap: '$1',
+    alignItems: 'start',
+    gridAutoFlow: 'row',
+  },
+});
+
+const StyledAction = styled('div', {
+  '@phone': {
+    gridColumn: '1 / span 2',
+  },
 });
 
 const StyledLabel = styled('div', {

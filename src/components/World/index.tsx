@@ -39,7 +39,7 @@ interface Props {
 
 export function World({ children, fixedChildren }: React.PropsWithChildren<Props>) {
   const setCurrentScroll = useUpdateAtom(currentScrollOffsetAtom);
-  const pan = useSpring({ from: { x: 0, y: 0 } });
+  const pan = useSpring({ x: 0, y: 0 });
   const setPanAtom = useUpdateAtom(panSpringAtom);
   // Add reference to pan as an atom to control scroll from elsewhere
   useEffect(() => {
