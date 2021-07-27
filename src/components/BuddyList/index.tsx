@@ -51,10 +51,7 @@ export function BuddyList({ blogIds }: Props) {
       {/* <StyledSection>
         <Button>Join ring</Button>
       </StyledSection> */}
-      <StyledList
-        css={{
-          padding: '$1',
-        }}>
+      <StyledList>
         {Object.entries(blogsByUser).map(([user, blogs]) => (
           <Buddy key={user} userId={user} blogs={blogs} />
         ))}

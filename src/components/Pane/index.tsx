@@ -135,7 +135,7 @@ const StyledPane = styled(animated.div, {
   position: 'absolute',
   boxShadow: '0 0 0 1px $colors$blackA',
   background: 'white',
-  padding: '$1',
+  padding: '$2',
   borderRadius: '$2',
   overflow: 'hidden',
   transition: 'box-shadow .25s linear',
@@ -159,7 +159,8 @@ const StyledPane = styled(animated.div, {
 
 export const StyledPaneTitle = styled('div', {
   typography: 's',
-  padding: '.125rem $1 $1 $1',
+  marginTop: '-.125rem',
+  padding: '0 $1 $1 $1',
   display: 'grid',
   placeItems: 'center',
 });

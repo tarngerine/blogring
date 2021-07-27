@@ -89,8 +89,10 @@ export function World({ children, fixedChildren }: React.PropsWithChildren<Props
   return (
     <div ref={ref}>
       <StyledViewport {...bind()}>
-        {fixedChildren}
-        <StyledPanWrapper style={pan}>{children}</StyledPanWrapper>
+        <StyledSelectable>
+          {fixedChildren}
+          <StyledPanWrapper style={pan}>{children}</StyledPanWrapper>
+        </StyledSelectable>
       </StyledViewport>
     </div>
   );
@@ -100,6 +102,10 @@ const StyledViewport = styled(animated.div, {
   full: 'fixed',
   overflow: 'hidden',
   userSelect: 'none', // prevent text selection when dragging in canvas
+});
+
+const StyledSelectable = styled('div', {
+  userSelect: 'auto', // re-enable text selection within content
 });
 
 const StyledPanWrapper = styled(animated.div, {});
