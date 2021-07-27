@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { BLOGSIZE, shouldAnimateEntryAtom } from '../components/Blog';
 import { randomColor } from '../lib';
-import { BlogPayload, RingPayload, sendSocketAtom } from '../lib/ws';
+import { BlogPayload, RingPayload, sendSocketAtom, UserPayload } from '../lib/ws';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 
@@ -49,6 +49,7 @@ const userFamily = atomFamily((id: UUID | null) =>
         ...prev,
         [user.id]: user,
       }));
+      set(sendSocketAtom, { event: 'user', user } as UserPayload);
     },
   ),
 );

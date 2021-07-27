@@ -45,13 +45,19 @@ export type RingPayload = {
   ring: Pick<Ring, 'id'> & Partial<Ring>;
 };
 
+export type UserPayload = {
+  event: 'user';
+  user: Pick<User, 'id'> & Partial<User>;
+};
+
 type Payload =
   | CursorPayload
   | RotationPayload
   | BlogPayload
   | JoinPayload
   | SyncPayload
-  | RingPayload;
+  | RingPayload
+  | UserPayload;
 type Event = Payload['event'];
 type PartialPayload = Omit<Payload, 'id' | 'event'>;
 

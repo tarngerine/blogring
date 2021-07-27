@@ -42,9 +42,13 @@ export function Banner({ ring: { color, id, name, blogs } }: Props) {
                 if (!name) return console.error('No name provided');
                 setUser({ ...user, name });
               }
+
+              const title = prompt('name this new blog', 'my cool new blog');
+              if (!title) return console.error('No title provided');
               createBlog({
                 ringId: id,
                 blogInfo: {
+                  title,
                   author: user.id,
                 },
               });

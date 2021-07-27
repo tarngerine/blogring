@@ -9,6 +9,7 @@ import { currentUserIdAtom, useWindowSizeObserver } from './atoms/current';
 import data from './atoms/data';
 import { Ring } from './components/Ring';
 import { randomColor } from './lib';
+import { UserPayload, useSetSocketHandler } from './lib/ws';
 
 function App() {
   useWindowSizeObserver();
@@ -40,6 +41,18 @@ function useCreateUser() {
       [id]: newUser,
     }));
   }, [currentUserId]);
+
+  // Also sync changes from websockets
+  useSetSocketHandler('user', (payload) => {
+    const { user } = payload as UserPayload;
+    setUsers((prev) => ({
+      ...prev,
+      [user.id]: {
+        ...prev[user.id],
+        ...user,
+      },
+    }));
+  });
 }
 
 export default App;
