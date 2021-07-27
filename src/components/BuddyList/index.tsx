@@ -121,7 +121,7 @@ const StyledItem = styled('li', {
       true: {
         padding: '$2',
         '&:hover': {
-          filter: 'brightness(120%)',
+          filter: 'brightness(105%)',
           cursor: 'pointer',
         },
       },

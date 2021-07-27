@@ -6,8 +6,10 @@ import { useGesture } from 'react-use-gesture';
 import { currentScrollOffsetAtom } from '../../atoms/current';
 import { CursorPayload, useSendSocket } from '../../lib/ws';
 import { styled } from '../../stitches.config';
-interface Props {}
-export function World({ children }: React.PropsWithChildren<Props>) {
+interface Props {
+  fixedChildren: React.ReactNode;
+}
+export function World({ children, fixedChildren }: React.PropsWithChildren<Props>) {
   const setCurrentScroll = useUpdateAtom(currentScrollOffsetAtom);
   const pan = useSpring({ from: { x: 0, y: 0 } });
   const bind = useGesture({
@@ -50,6 +52,7 @@ export function World({ children }: React.PropsWithChildren<Props>) {
   return (
     <div ref={ref}>
       <StyledViewport {...bind()}>
+        {fixedChildren}
         <StyledPanWrapper style={pan}>{children}</StyledPanWrapper>
       </StyledViewport>
     </div>
@@ -59,10 +62,7 @@ export function World({ children }: React.PropsWithChildren<Props>) {
 const StyledViewport = styled(animated.div, {
   full: 'fixed',
   overflow: 'hidden',
-  pointerEvents: 'none',
-});
-
-const StyledPanWrapper = styled(animated.div, {
-  pointerEvents: 'auto',
   userSelect: 'none', // prevent text selection when dragging in canvas
 });
+
+const StyledPanWrapper = styled(animated.div, {});

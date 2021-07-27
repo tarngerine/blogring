@@ -30,8 +30,8 @@ export function Ring() {
   return (
     <>
       <StyledBackground css={{ background: ring.color }} />
-      <Banner ring={ring} />
-      <World>
+
+      <World fixedChildren={<Banner ring={ring} />}>
         <Blogs ids={ring.blogs} />
         <Cursors />
       </World>
