@@ -3,6 +3,7 @@ import { atom } from 'jotai';
 import { useAtomValue } from 'jotai/utils';
 import React, { useRef } from 'react';
 
+import data from '../../atoms/data';
 import { CursorPayload, socketStateAtom } from '../../lib/ws';
 import { styled } from '../../stitches.config';
 import { Vec } from '../../types';
@@ -25,8 +26,9 @@ export function Cursors() {
   );
 }
 
-function Cursor({ position: { x, y } }: { id: string; position: Vec }) {
+function Cursor({ position: { x, y }, id }: { id: string; position: Vec }) {
   const ref = useRef<HTMLDivElement>(null);
+  const user = useAtomValue(data.userFamily(id));
 
   return (
     <Spring to={{ x, y }}>
@@ -34,7 +36,7 @@ function Cursor({ position: { x, y } }: { id: string; position: Vec }) {
         <StyledCursor
           style={styles}
           css={{
-            filter: `sepia(100%) saturate(150%) darkness(150%) hue-rotate(180deg)`,
+            tintToColor: user?.color,
           }}
           ref={ref}></StyledCursor>
       )}
@@ -48,6 +50,6 @@ const StyledCursor = styled(animated.div, {
   height: '100px',
   backgroundImage: 'url(./glove.svg)',
   backgroundRepeat: 'no-repeat',
-  pointerEvents: 'none',
+  // pointerEvents: 'none',
   zIndex: '$cursor',
 });

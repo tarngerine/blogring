@@ -32,9 +32,10 @@ export function useSize() {
 }
 
 // Generate a random color in our palette
+export const BASE_COLOR = 'salmon'; // sets the SV for our colors
 export function randomColor() {
   const hueRotate = filterHueRotate(Math.random() * 360);
-  return formatRgb(hueRotate(parse('salmon')));
+  return formatRgb(hueRotate(parse(BASE_COLOR)));
 }
 
 export { SocketProvider } from './ws';

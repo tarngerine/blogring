@@ -1,6 +1,8 @@
 // stitches.config.ts
 import { createCss } from '@stitches/react';
-import { formatRgb, interpolate, parse, rgb } from 'culori';
+import { formatRgb, hsv, interpolate, parse, rgb } from 'culori';
+
+import { BASE_COLOR } from './lib';
 
 export const { styled, css, global, keyframes, getCssString, theme } = createCss({
   theme: {
@@ -83,6 +85,20 @@ export const { styled, css, global, keyframes, getCssString, theme } = createCss
       const colorWithAlpha = rgb(parse(color));
       colorWithAlpha.alpha = 0.3;
       return { boxShadow: `0 0 0 1px ${formatRgb(colorWithAlpha)}` };
+    },
+    tintToColor: () => (color?: string) => {
+      if (!color) return {};
+      console.log(color);
+      // take the hue of our color
+      const toColor = hsv(parse(color));
+      // take the hue of the base color
+      const baseColor = hsv(parse(BASE_COLOR));
+      // take that difference and apply it to the hue rotation for this sepia-based tint filter
+      const baseColorRotation = -110;
+      const hueRotate = toColor.h - baseColor.h + baseColorRotation;
+      return {
+        filter: `sepia(1) saturate(35%) brightness(80%) hue-rotate(${hueRotate}deg)`,
+      };
     },
   },
 });
