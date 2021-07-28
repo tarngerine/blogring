@@ -2,13 +2,14 @@
   "name": "blogring",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "node server.js & vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path ./.gitignore",
     "lint:format": "prettier  --loglevel warn --write \"./**/*.{js,jsx,ts,tsx,css,md,json}\" ",
     "lint": "yarn lint:format && yarn lint:fix ",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "start": "yarn build && NODE_ENV=production node server.js"
   },
   "engines": {
     "node": "14.x"
@@ -22,7 +23,9 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-use-gesture": "^9.1.3",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "express": "^4.17.1",
+    "ws": "^7.5.3"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

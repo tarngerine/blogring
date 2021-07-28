@@ -1,13 +1,18 @@
 import { atom, useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { currentUserIdAtom } from '../atoms/current';
 import data from '../atoms/data';
 import { Blog, Ring, User, UUID, Vec } from '../types';
 
-const SOCKET_URL = 'wss://blogring-ws-1.glitch.me/ws';
-// const SOCKET_URL = 'ws://localhost:3535';
+// Websocket url changes based on dev or prod
+// localhost is not https:// so use ws:// instead of wss://
+const SOCKET_URL = import.meta.env.DEV
+  ? 'ws://localhost:3001/ws'
+  : `${window.location.protocol.indexOf('https') > -1 ? 'wss' : 'ws'}://${
+      window.location.host
+    }/ws`;
 
 type PayloadEvent = {
   id: string; // unique id that determines how its stored in socket state, only useful for presence?
@@ -175,11 +180,20 @@ function useSocket() {
     setSocket(newSocket);
   }, []);
 
+  const [, setRetries] = useState(0);
+
   // connect and reconnect
   useEffect(() => {
     if (socket === null) {
-      console.log('Connecting to socket');
-      setup();
+      setRetries((retries) => {
+        if (retries > 3) {
+          console.error('Too many retries, stopping');
+          return retries;
+        }
+        console.log('Connecting to socket ', SOCKET_URL, ', retry', retries);
+        setup();
+        return retries + 1;
+      });
     }
   }, [setup, socket]);
 }
