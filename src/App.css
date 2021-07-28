@@ -50,6 +50,8 @@ body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
+  overscroll-behavior: noscroll;
+  cursor: image-set(url(glove.svg) 1x, url(glove@2x.svg) 2x), auto;
 }
 
 /* A elements that don't have a class get default styles */
