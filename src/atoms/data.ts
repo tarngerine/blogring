@@ -3,7 +3,7 @@ import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { v4 as uuid } from 'uuid';
 
 import { BLOGSIZE, shouldAnimateEntryAtom } from '../components/Blog';
-import { randomColor } from '../lib';
+import { BASE_COLOR, randomColor } from '../lib';
 import { BlogPayload, RingPayload, sendSocketAtom, UserPayload } from '../lib/ws';
 import { Blog, Ring, User, UUID } from '../types';
 import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
@@ -28,7 +28,7 @@ const users = atomWithStorage<Record<UUID, User>>('users', {
   '1': {
     id: '1',
     name: 'julius',
-    color: 'salmon',
+    color: BASE_COLOR,
     rings: ['1'],
   },
 });
@@ -64,7 +64,7 @@ try creating one! everything's live!
     `,
     position: { x: 200, y: 200 },
     updatedAt: Date.now() + 100,
-    color: 'salmon',
+    color: BASE_COLOR,
     createdAt: Date.now() + 100,
   },
 });
