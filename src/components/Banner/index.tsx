@@ -11,7 +11,7 @@ interface Props {
   ring: Ring;
 }
 
-export function Banner({ ring: { color, id, name, blogs } }: Props) {
+export function Banner({ ring: { color, id, name } }: Props) {
   const createBlog = useUpdateAtom(data.createBlog);
   const [user, setUser] = useUser();
 
@@ -110,10 +110,10 @@ const StyledAction = styled('div', {
   },
 });
 
-const StyledLabel = styled('div', {
-  // position: 'absolute',
-  // top: '0',
-  padding: '$1 0 .125rem',
-  typography: 'xs',
-  textTransform: 'uppercase',
-});
+// const StyledLabel = styled('div', {
+//   // position: 'absolute',
+//   // top: '0',
+//   padding: '$1 0 .125rem',
+//   typography: 'xs',
+//   textTransform: 'uppercase',
+// });

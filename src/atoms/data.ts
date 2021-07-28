@@ -11,9 +11,9 @@ import { currentScrollOffsetAtom, currentWindowSizeAtom } from './current';
 const rings = atomWithStorage<Record<UUID, Ring>>('rings', {
   '1': {
     id: '1',
-    name: 'blogring hivemind',
+    name: 'cuties vibin',
     color: 'lightblue',
-    blogs: ['1', '2'],
+    blogs: ['1'],
   },
 });
 
@@ -29,12 +29,6 @@ const users = atomWithStorage<Record<UUID, User>>('users', {
     id: '1',
     name: 'julius',
     color: 'salmon',
-    rings: ['1'],
-  },
-  '2': {
-    id: '2',
-    name: 'sabrina',
-    color: 'mediumorchid',
     rings: ['1'],
   },
 });
@@ -59,22 +53,19 @@ const blogs = atomWithStorage<Record<UUID, Blog>>('blogs', {
   '1': {
     id: '1',
     author: '1',
-    title: 'Vibe log',
-    content: 'vibin and jigglin\n\nfinally below 90 in dallas this wk',
-    position: { x: 300, y: 300 },
+    title: 'welcome~',
+    content: `welcome to blogring
+
+it's a place for u to share ur thoughts and feelings with friends from cyberspace. i made this because i missed the synchronous vibes and pseudonymity of using aim with irl and net friends
+
+this is a shared ring, you can create a blog in here and only others in this ring can see it
+
+try creating one! everything's live!
+    `,
+    position: { x: 200, y: 200 },
     updatedAt: Date.now() + 100,
     color: 'salmon',
     createdAt: Date.now() + 100,
-  },
-  '2': {
-    id: '2',
-    author: '2',
-    title: 'army takes',
-    content: '🧈',
-    position: { x: 100, y: 100 },
-    updatedAt: Date.now(),
-    color: 'mediumorchid',
-    createdAt: Date.now(),
   },
 });
 
